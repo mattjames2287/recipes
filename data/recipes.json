@@ -40,5 +40,45 @@
       "Cook on a buttered griddle until golden on both sides."
     ],
     "notes": "Let the batter rest for 5 minutes before cooking for a fluffier texture."
+  },
+  {
+    "title": "Chocolate Chip Cookies",
+    "category": "Dessert",
+    "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e",
+    "ingredients": [
+      "Butter",
+      "Sugar",
+      "Brown sugar",
+      "Vanilla",
+      "Egg",
+      "Flour",
+      "Baking soda",
+      "Salt",
+      "Chocolate chips"
+    ],
+    "steps": [
+      "Preheat oven 350",
+      "Mix ingredients",
+      "Bake 9-11 minutes"
+    ]
+  },
+  {
+    "title": "Garlic Parmesan Chicken Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5",
+    "ingredients": [
+      "Chicken",
+      "Parmesan sauce",
+      "Milk",
+      "Cream cheese",
+      "Parmesan",
+      "Pasta"
+    ],
+    "steps": [
+      "Add to crockpot",
+      "Cook",
+      "Shred chicken",
+      "Mix pasta"
+    ]
   }
 ]
