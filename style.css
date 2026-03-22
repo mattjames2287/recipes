@@ -107,9 +107,9 @@ button { cursor: pointer; }
 .book-wrap {
   position: absolute;
   left: 50%;
-  top: 50.5%;
-  width: min(78vw, 1040px);
-  aspect-ratio: 1.82 / 1;
+  top: 49%;
+  width: min(86vw, 1140px);
+  aspect-ratio: 1.54 / 1;
   z-index: 10;
   transform: translate(-50%, -50%);
 }
@@ -335,9 +335,9 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
 @media (max-width: 980px) {
   .book-wrap {
     left: 50%;
-    top: 56%;
-    width: min(86vw, 920px);
-    aspect-ratio: 1.65 / 1;
+    top: 50%;
+    width: min(90vw, 980px);
+    aspect-ratio: 1.46 / 1;
     transform: translate(-50%, -50%);
   }
   .brand { max-width: 560px; }
@@ -396,9 +396,9 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
 
 @media (max-width: 900px) {
   .book-wrap {
-    top: 53.5%;
-    width: min(90vw, 940px);
-    aspect-ratio: 1.36 / 1;
+    top: 49.5%;
+    width: min(92vw, 980px);
+    aspect-ratio: 1.34 / 1;
     transform: translate(-50%, -50%);
   }
 }
