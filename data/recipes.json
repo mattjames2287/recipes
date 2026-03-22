@@ -1,44 +1,138 @@
 [
   {
-    "title": "Garlic Butter Pasta",
-    "category": "Dinner",
-    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1200&q=80",
-    "description": "Silky pasta with garlic, butter, parmesan, and black pepper.",
+    "title": "Chocolate Chip Cookies",
+    "category": "Dessert",
+    "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1200&q=80",
+    "description": "",
     "ingredients": [
-      "12 oz pasta",
-      "4 tbsp butter",
-      "4 garlic cloves, minced",
-      "1/2 cup grated parmesan",
-      "Salt and black pepper"
+      "8 tablespoons of salted butter",
+      "1/2 cup white sugar",
+      "1/4 cup packed brown sugar",
+      "1 teaspoon vanilla",
+      "1 egg",
+      "1 1/2 cup all purpose flour",
+      "1/2 teaspoon baking soda",
+      "1/4 teaspoon of salt",
+      "3/4 cup of chocolate chips"
     ],
     "steps": [
-      "Boil pasta in salted water until al dente.",
-      "Melt butter in a skillet and cook garlic for about 30 seconds.",
-      "Add drained pasta and a splash of pasta water.",
-      "Stir in parmesan, salt, and pepper until glossy.",
-      "Serve warm."
+      "preheat oven to 350\u00b0",
+      "Microwave butter until melted",
+      "Beat the butter with sugars until creamy",
+      "Add vanilla + egg",
+      "Mix until incorporated",
+      "Add flour, baking soda and salt gradually until beaten",
+      "Add chocolate chips",
+      "Bake for 9-11 minutes"
     ],
-    "notes": "Add parsley or red pepper flakes if you want a little extra color and heat."
+    "notes": ""
   },
   {
-    "title": "Blueberry Pancakes",
-    "category": "Breakfast",
-    "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1200&q=80",
-    "description": "Fluffy pancakes with juicy blueberries and a golden edge.",
+    "title": "Crock Pot Garlic Parmesan Chicken Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1200&q=80",
+    "description": "",
     "ingredients": [
-      "2 cups flour",
-      "2 tbsp sugar",
-      "2 tsp baking powder",
-      "2 eggs",
-      "1 3/4 cups milk",
-      "1 cup blueberries"
+      "1 (12 oz) bottle of Parmesan Garlic Sauce",
+      "2 pounds boneless, skinless chicken breast",
+      "1 cup milk",
+      "8 oz. cream cheese (cut into block)",
+      "4 oz. shredded or grated parmesan cheese",
+      "12 oz. pasta"
     ],
     "steps": [
-      "Whisk dry ingredients in a bowl.",
-      "Mix eggs and milk, then combine with dry ingredients.",
-      "Fold in blueberries gently.",
-      "Cook on a buttered griddle until golden on both sides."
+      "Place chicken in slow cooker. Pour entire bottle of Parmesan Garlic Sauce over the chicken.",
+      "Fill Parmesan Garlic Sauce bottle w/ milk and shake. Add milk and remaining sauce to slow cooker.",
+      "Add cream cheese cut into block.",
+      "Add parmesan cheese + stir to coat + combine to the chicken.",
+      "Cook on low for 3-4 hours or cook on high for 2-3 hours.",
+      "Shred chicken and return to slow cooker + mix into the sauce.",
+      "Cook pasta + pour pasta into the slow cooker. Stir to combine."
     ],
-    "notes": "Let the batter rest for 5 minutes before cooking for a fluffier texture."
+    "notes": ""
+  },
+  {
+    "title": "Raspberry Custard Pie",
+    "category": "Dessert",
+    "image": "https://images.unsplash.com/photo-1464306076886-da185f6a9d05?auto=format&fit=crop&w=1200&q=80",
+    "description": "",
+    "ingredients": [
+      "1 unbaked 9 inch pie crust",
+      "4 cups fresh raspberries",
+      "3 large eggs (lightly beaten)",
+      "1 1/3 cup granulated sugar",
+      "1/4 cup all purpose flour",
+      "1 cup whole milk",
+      "1 tablespoon vanilla"
+    ],
+    "steps": [
+      "Pre-heat oven to 375\u00b0",
+      "Prepare crust + place into 9 inch pie pans",
+      "Whisk together beaten eggs, milk + vanilla in seperate bowl, mix together sugar + flour",
+      "Add to wet ingredients + dry ingredients + whisk until smooth",
+      "Put raspberries in bottom of pie crust, then add the home made custard",
+      "Bake for 45 minutes",
+      "Let cool completely before storing in fridge"
+    ],
+    "notes": ""
+  },
+  {
+    "title": "Creamy Pesto Chicken Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1516100882582-96c3a05fe590?auto=format&fit=crop&w=1200&q=80",
+    "description": "",
+    "ingredients": [
+      "1 pound boneless chicken breast",
+      "2 Tbsp butter",
+      "2 garlic cloves",
+      "1/2 pound penne pasta",
+      "1 1/2 cups chicken broth",
+      "1 cup milk",
+      "3 oz. cream cheese",
+      "1/3 cup pesto",
+      "1/4 cup grated parmesan",
+      "1/4 cup sundried tomatoes",
+      "1 pinch crushed red pepper",
+      "3 cups fresh spinach"
+    ],
+    "steps": [
+      "Brown cubed chicken in a skillet w/ butter + garlic",
+      "add uncooked pasta + chicken broth",
+      "cover + simmer until pasta is tender + most of the broth is absorbed",
+      "add pesto, cream cheese + milk",
+      "stir while heating until the cream cheese has melted into the milk + formed a sauce w/ the pesto",
+      "stir in grated parmesan until cheese is melted",
+      "add fresh spinach + sundried tomatoes. Stir until the spinach has wilted"
+    ],
+    "notes": ""
+  },
+  {
+    "title": "Crock Pot Banana Bread",
+    "category": "Breakfast",
+    "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80",
+    "description": "",
+    "ingredients": [
+      "cooking spray",
+      "1 stick melted butter",
+      "3/4 cup granulated sugar",
+      "1/4 cup brown sugar (packed)",
+      "2 large eggs",
+      "1 tsp. vanilla extract",
+      "3 medium bananas (mashed)",
+      "2 cups all purpose flour",
+      "1 tsp. baking powder",
+      "1/2 tsp. baking soda",
+      "1/2 tsp. kosher salt",
+      "1/2 tsp. cinnamon",
+      "1 1/2 cups chocolate chips"
+    ],
+    "steps": [
+      "using two 4\"-5\" strips of parchment paper, line the bowl of your crock pot in an \"x\" formation + spray w/ cooking spray.",
+      "in a large bowl, whisk together butter, sugar, brown sugar, eggs + vanilla. Whisk in mashed bananas.",
+      "in another large bowl, whisk together flour, baking powder, baking soda, cinnamon + salt. Fold dry ingredients into wet ingredients until combined, then fold in chocolate chips.",
+      "transfer batter to slow cooker + smooth into an even layer. Top with more chocolate chips + cook on low for 4 hours.",
+      "remove from crock pot base + let cool for 10 minutes before serving."
+    ],
+    "notes": ""
   }
 ]
