@@ -596,3 +596,5 @@ textarea {
 
 
 
+
+.book-wrap{top:62%!important;transform:translate(-50%,-50%) scale(1.2) skewX(-5deg)!important;max-width:900px!important;}
