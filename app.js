@@ -133,7 +133,9 @@ function renderRecipe() {
     recipeDescription.textContent = "Add your first recipe with the button above.";
     ingredientsList.innerHTML = "<li>Start by adding a recipe.</li>";
     stepsList.innerHTML = "<li>It will appear here automatically.</li>";
-    recipeNotes.textContent = "Use the Add Recipe form to begin building your cookbook.";
+    const notesBox = document.querySelector(".notes-box");
+    recipeNotes.textContent = "";
+    if (notesBox) notesBox.style.display = "none";
     recipeCount.textContent = "0 / 0";
     counterText.textContent = activeCategory === "All" ? "No recipes yet" : `No recipes in ${activeCategory}`;
     return;
@@ -149,7 +151,9 @@ function renderRecipe() {
   recipeCategory.textContent = recipe.category || "Recipe";
   recipeTitle.textContent = recipe.title || "Untitled Recipe";
   recipeDescription.textContent = recipe.description || "";
-  recipeNotes.textContent = recipe.notes || "No extra notes yet.";
+  const notesBox = document.querySelector(".notes-box");
+  recipeNotes.textContent = recipe.notes || "";
+  if (notesBox) notesBox.style.display = recipe.notes ? "block" : "none";
   recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
   counterText.textContent = `${recipes.length} recipe${recipes.length === 1 ? "" : "s"} in ${activeCategory === "All" ? "your book" : activeCategory}`;
 
@@ -251,3 +255,7 @@ renderCategories();
 renderFormCategoryPills();
 renderRecipe();
 loadStarterRecipes();
+
+prevBtn.onclick = () => { currentIndex -= 1; recipeCard.classList.remove("flipped"); renderRecipe(); };
+nextBtn.onclick = () => { currentIndex += 1; recipeCard.classList.remove("flipped"); renderRecipe(); };
+flipBtn.onclick = () => { recipeCard.classList.toggle("flipped"); };
