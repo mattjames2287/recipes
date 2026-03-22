@@ -107,9 +107,9 @@ button { cursor: pointer; }
 .book-wrap {
   position: absolute;
   left: 50.3%;
-  top: 55.8%;
-  width: min(86vw, 1260px);
-  aspect-ratio: 2.18 / 1;
+  top: 54.8%;
+  width: min(87vw, 1280px);
+  aspect-ratio: 1.86 / 1;
   z-index: 10;
   transform: translate(-50%, -50%);
 }
@@ -335,8 +335,9 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
 @media (max-width: 980px) {
   .book-wrap {
     left: 50.2%;
-    top: 64.4%;
-    width: min(78vw, 860px);
+    top: 60.8%;
+    width: min(82vw, 920px);
+    aspect-ratio: 1.65 / 1;
     transform: translate(-50%, -50%) perspective(1800px) rotateX(14deg) rotateY(-1deg) rotateZ(-0.95deg);
   }
   .brand { max-width: 560px; }
@@ -395,9 +396,9 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
 
 @media (max-width: 900px) {
   .book-wrap {
-    top: 57%;
-    width: min(92vw, 980px);
-    aspect-ratio: 1.42 / 1;
+    top: 55.5%;
+    width: min(93vw, 1000px);
+    aspect-ratio: 1.28 / 1;
     transform: translate(-50%, -50%) rotateZ(-0.4deg);
   }
 }
