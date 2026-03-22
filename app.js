@@ -249,6 +249,7 @@ renderCategories();
 renderFormCategoryPills();
 renderRecipe();
 loadStarterRecipes();
+<<<<<<< HEAD
 
 
 function showPrevRecipe() {
@@ -270,3 +271,5 @@ function toggleFlip() {
 prevBtn.onclick = showPrevRecipe;
 nextBtn.onclick = showNextRecipe;
 flipBtn.onclick = toggleFlip;
+=======
+>>>>>>> b4998b09f666530b248506f928d1550acd9441ff
