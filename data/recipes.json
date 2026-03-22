@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Garlic Butter Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1200&q=80",
+    "description": "Silky pasta with garlic, butter, parmesan, and black pepper.",
+    "ingredients": [
+      "12 oz pasta",
+      "4 tbsp butter",
+      "4 garlic cloves, minced",
+      "1/2 cup grated parmesan",
+      "Salt and black pepper"
+    ],
+    "steps": [
+      "Boil pasta in salted water until al dente.",
+      "Melt butter in a skillet and cook garlic for about 30 seconds.",
+      "Add drained pasta and a splash of pasta water.",
+      "Stir in parmesan, salt, and pepper until glossy.",
+      "Serve warm."
+    ],
+    "notes": "Add parsley or red pepper flakes if you want a little extra color and heat."
+  },
+  {
+    "title": "Blueberry Pancakes",
+    "category": "Breakfast",
+    "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1200&q=80",
+    "description": "Fluffy pancakes with juicy blueberries and a golden edge.",
+    "ingredients": [
+      "2 cups flour",
+      "2 tbsp sugar",
+      "2 tsp baking powder",
+      "2 eggs",
+      "1 3/4 cups milk",
+      "1 cup blueberries"
+    ],
+    "steps": [
+      "Whisk dry ingredients in a bowl.",
+      "Mix eggs and milk, then combine with dry ingredients.",
+      "Fold in blueberries gently.",
+      "Cook on a buttered griddle until golden on both sides."
+    ],
+    "notes": "Let the batter rest for 5 minutes before cooking for a fluffier texture."
+  }
+]
