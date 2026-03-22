@@ -107,7 +107,7 @@ button { cursor: pointer; }
 .book-wrap {
   position: absolute;
   left: 50.2%;
-  top: 70.8%;
+  top: 56.5%;
   width: min(94vw, 1420px);
   aspect-ratio: 2.34 / 1;
   z-index: 10;
