@@ -106,20 +106,20 @@ button { cursor: pointer; }
 
 .book-wrap {
   position: absolute;
-  left: 50.4%;
-  top: 54.6%;
-  width: min(80vw, 1170px);
-  aspect-ratio: 2.12 / 1;
+  left: 50.3%;
+  top: 62.2%;
+  width: min(86vw, 1260px);
+  aspect-ratio: 2.18 / 1;
   z-index: 10;
-  transform: translate(-50%, -50%) rotateZ(-1.15deg);
+  transform: translate(-50%, -50%) rotateZ(-0.85deg);
 }
 
 .book-shell {
   width: 100%;
   height: 100%;
   background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(246,243,237,0.99));
-  border-radius: 18px 18px 26px 26px;
-  box-shadow: 0 26px 48px rgba(0,0,0,0.20), 0 6px 0 rgba(171,132,92,0.22);
+  border-radius: 16px 16px 24px 24px;
+  box-shadow: 0 24px 42px rgba(0,0,0,0.18), 0 7px 0 rgba(171,132,92,0.24);
   border: 1px solid rgba(125, 103, 79, 0.20);
   display: grid;
   grid-template-columns: 1fr 1fr;
