@@ -56,7 +56,11 @@ button { cursor: pointer; }
   padding: 14px 18px 12px;
   border-radius: 22px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+<<<<<<< HEAD
   max-width: 620px;
+=======
+  max-width: 680px;
+>>>>>>> b4998b09f666530b248506f928d1550acd9441ff
 }
 .brand h1 {
   margin: 0;
@@ -107,6 +111,7 @@ button { cursor: pointer; }
 .book-wrap {
   position: absolute;
   left: 50.4%;
+<<<<<<< HEAD
   top: 57.2%;
   width: min(68.5vw, 1000px);
   aspect-ratio: 1.72 / 1;
@@ -118,6 +123,15 @@ button { cursor: pointer; }
 .book-wrap, .book-shell, .page, .mini-controls { pointer-events: auto; }
 .book-wrap { z-index: 15; }
 .nav-btn, .flip-btn, .wood-btn, .chip, .pill-btn { touch-action: manipulation; position: relative; z-index: 30; }
+=======
+  top: 63.3%;
+  width: min(67vw, 980px);
+  aspect-ratio: 1.72 / 1;
+  z-index: 10;
+  transform: translate(-50%, -50%) perspective(1800px) rotateX(18deg) rotateY(-1deg) rotateZ(-1.15deg) skewX(-1deg);
+  transform-style: preserve-3d;
+}
+>>>>>>> b4998b09f666530b248506f928d1550acd9441ff
 .book-shell {
   width: 100%;
   height: 100%;
@@ -337,11 +351,15 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
     max-width: 760px;
     margin: 0 auto;
   }
+<<<<<<< HEAD
   
 .book-wrap, .book-shell, .page, .mini-controls { pointer-events: auto; }
 .book-wrap { z-index: 15; }
 .nav-btn, .flip-btn, .wood-btn, .chip, .pill-btn { touch-action: manipulation; position: relative; z-index: 30; }
 .book-shell {
+=======
+  .book-shell {
+>>>>>>> b4998b09f666530b248506f928d1550acd9441ff
     grid-template-columns: 1fr;
   }
   .book-shell::before { display: none; }
