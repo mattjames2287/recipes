@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Recipe Book</title>
+  <title>Bari Family Cook Book</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="scene">
     <header class="toolbar">
       <div class="brand">
-        <p class="brand-kicker">Kitchen Book</p>
-        <h1>My Recipe Book</h1>
+        <p class="brand-kicker">Family Kitchen Book</p>
+        <h1>Bari Family Cook Book</h1>
         <p class="brand-sub">Fresh, simple, flip-through recipes right on the counter.</p>
       </div>
 
@@ -60,13 +60,13 @@
           <div class="side-panel">
             <div class="notes-box">
               <div class="eyebrow">Recipe Notes</div>
-              <h3 class="section-title">Kitchen counter edition</h3>
-              <p id="recipeNotes">Use the Add Recipe button to build your own cookbook. New recipes save in your browser on this device.</p>
+              <h3 class="section-title">Family kitchen edition</h3>
+              <p id="recipeNotes">Use the Add Recipe button to build your own cookbook. This layout is mobile-friendly, so your wife can open it on her phone and browse recipes easily.</p>
             </div>
 
-            <div class="notes-box">
-              <div class="eyebrow">Form Tip</div>
-              <p>In the form, put one ingredient per line and one direction per line so everything drops into the cookbook cleanly.</p>
+            <div class="notes-box phone-note">
+              <div class="eyebrow">Phone Use</div>
+              <p>Anything added from the form saves on that specific phone or browser. To keep recipes shared for both of you, also copy them into <strong>data/recipes.json</strong> in the repo.</p>
             </div>
 
             <div class="mini-controls">
@@ -86,7 +86,7 @@
       <div class="modal-head">
         <div>
           <h2>Add a recipe</h2>
-          <p>Fill this out like a recipe card. Ingredients and directions should each be one item per line.</p>
+          <p>Pick a category pill, then put one ingredient per line and one direction per line.</p>
         </div>
         <button class="icon-close" id="closeFormBtn" type="button" aria-label="Close form">×</button>
       </div>
@@ -99,15 +99,9 @@
           </div>
 
           <div class="field">
-            <label for="category">Category</label>
-            <select id="category" name="category">
-              <option>Breakfast</option>
-              <option>Lunch</option>
-              <option selected>Dinner</option>
-              <option>Dessert</option>
-              <option>Snacks</option>
-              <option>Drinks</option>
-            </select>
+            <label>Category</label>
+            <input id="category" name="category" type="hidden" value="Dinner" />
+            <div class="pill-selector" id="formCategoryPills"></div>
           </div>
 
           <div class="field field-full">

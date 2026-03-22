@@ -1,6 +1,7 @@
 const STORAGE_KEY = "recipe-book-local-v1";
 const STARTER_DATA_PATH = "data/recipes.json";
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80";
+const CATEGORY_OPTIONS = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"];
 
 const recipeCard = document.getElementById("recipeCard");
 const recipeImage = document.getElementById("recipeImage");
@@ -22,6 +23,8 @@ const closeFormBtn = document.getElementById("closeFormBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const recipeModal = document.getElementById("recipeModal");
 const recipeForm = document.getElementById("recipeForm");
+const formCategoryPills = document.getElementById("formCategoryPills");
+const categoryInput = document.getElementById("category");
 
 let starterRecipes = [];
 let userRecipes = loadLocalRecipes();
@@ -59,9 +62,10 @@ function ensureArray(value) {
 }
 
 function normalizeRecipe(recipe) {
+  const category = String(recipe.category || "Dinner").trim();
   return {
     title: String(recipe.title || "Untitled Recipe").trim(),
-    category: String(recipe.category || "Dinner").trim(),
+    category: CATEGORY_OPTIONS.includes(category) ? category : "Dinner",
     image: String(recipe.image || "").trim(),
     description: String(recipe.description || "").trim(),
     ingredients: ensureArray(recipe.ingredients),
@@ -84,7 +88,7 @@ function renderList(items, target) {
 }
 
 function renderCategories() {
-  const categories = ["All", ...new Set(allRecipes().map((recipe) => recipe.category).filter(Boolean))];
+  const categories = ["All", ...CATEGORY_OPTIONS];
   categoryRow.innerHTML = "";
 
   categories.forEach((category) => {
@@ -103,6 +107,21 @@ function renderCategories() {
   });
 }
 
+function renderFormCategoryPills() {
+  formCategoryPills.innerHTML = "";
+  CATEGORY_OPTIONS.forEach((category) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `pill-btn${categoryInput.value === category ? " active" : ""}`;
+    button.textContent = category;
+    button.addEventListener("click", () => {
+      categoryInput.value = category;
+      renderFormCategoryPills();
+    });
+    formCategoryPills.appendChild(button);
+  });
+}
+
 function renderRecipe() {
   const recipes = filteredRecipes();
 
@@ -110,7 +129,7 @@ function renderRecipe() {
     recipeImage.src = FALLBACK_IMAGE;
     recipeImage.alt = "No recipe available";
     recipeCategory.textContent = activeCategory;
-    recipeTitle.textContent = "No recipes here yet";
+    recipeTitle.textContent = activeCategory === "All" ? "No recipes here yet" : `No ${activeCategory.toLowerCase()} recipes yet`;
     recipeDescription.textContent = "Add your first recipe with the button above.";
     ingredientsList.innerHTML = "<li>Start by adding a recipe.</li>";
     stepsList.innerHTML = "<li>It will appear here automatically.</li>";
@@ -141,13 +160,15 @@ function renderRecipe() {
 function openModal() {
   recipeModal.classList.add("show");
   recipeModal.setAttribute("aria-hidden", "false");
+  renderFormCategoryPills();
 }
 
 function closeModal() {
   recipeModal.classList.remove("show");
   recipeModal.setAttribute("aria-hidden", "true");
   recipeForm.reset();
-  document.getElementById("category").value = "Dinner";
+  categoryInput.value = "Dinner";
+  renderFormCategoryPills();
 }
 
 function parseLines(value) {
@@ -227,5 +248,6 @@ recipeForm.addEventListener("submit", (event) => {
 });
 
 renderCategories();
+renderFormCategoryPills();
 renderRecipe();
 loadStarterRecipes();
