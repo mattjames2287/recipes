@@ -16,6 +16,26 @@ const recipeCount = document.getElementById("recipeCount");
 const counterText = document.getElementById("counterText");
 const categoryRow = document.getElementById("categoryRow");
 
+const recipeFront = document.querySelector(".recipe-front");
+const recipeBack = document.querySelector(".recipe-back");
+
+function isMobileView() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function syncFlipDisplay() {
+  if (!recipeFront || !recipeBack) return;
+  const flipped = recipeCard.classList.contains("flipped");
+  if (isMobileView()) {
+    recipeFront.style.display = flipped ? "none" : "flex";
+    recipeBack.style.display = flipped ? "flex" : "none";
+  } else {
+    recipeFront.style.display = "";
+    recipeBack.style.display = "";
+  }
+}
+
+
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const flipBtn = document.getElementById("flipBtn");
@@ -157,6 +177,7 @@ function renderRecipe() {
 
   renderList(recipe.ingredients || [], ingredientsList);
   renderList(recipe.steps || [], stepsList);
+  syncFlipDisplay();
 }
 
 function openModal() {
@@ -197,17 +218,20 @@ async function loadStarterRecipes() {
 function showPrevRecipe() {
   currentIndex -= 1;
   recipeCard.classList.remove("flipped");
+  syncFlipDisplay();
   renderRecipe();
 }
 
 function showNextRecipe() {
   currentIndex += 1;
   recipeCard.classList.remove("flipped");
+  syncFlipDisplay();
   renderRecipe();
 }
 
 function toggleFlip() {
   recipeCard.classList.toggle("flipped");
+  syncFlipDisplay();
 }
 
 prevBtn.onclick = showPrevRecipe;
@@ -249,7 +273,10 @@ recipeForm.addEventListener("submit", (event) => {
   closeModal();
 });
 
+window.addEventListener("resize", syncFlipDisplay);
+
 renderCategories();
 renderFormCategoryPills();
 renderRecipe();
+syncFlipDisplay();
 loadStarterRecipes();
