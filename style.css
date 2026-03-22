@@ -64,7 +64,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -96,7 +96,7 @@ button {
 .brand-sub {
   margin: 6px 0 0;
   color: var(--muted);
-  font-size: 0.96rem;
+  font-size: 0.98rem;
 }
 
 .toolbar-right,
@@ -164,12 +164,12 @@ button {
 
 .book-wrap {
   position: absolute;
-  left: 50%;
-  top: 57.5%;
-  width: min(54vw, 760px);
+  left: 50.3%;
+  top: 61.2%;
+  width: min(61vw, 860px);
   aspect-ratio: 1.56 / 1;
   z-index: 10;
-  transform: translate(-50%, -50%) perspective(1800px) rotateX(30deg) rotateY(-1.5deg) rotateZ(-2.2deg) skewX(-4deg);
+  transform: translate(-50%, -50%) perspective(1800px) rotateX(24deg) rotateY(-1deg) rotateZ(-1.35deg) skewX(-1.6deg);
   transform-style: preserve-3d;
 }
 
@@ -200,7 +200,7 @@ button {
 }
 
 .page {
-  padding: 28px 28px 24px;
+  padding: 24px 24px 20px;
   position: relative;
   overflow: hidden;
   background: linear-gradient(180deg, var(--paper), var(--paper-2));
@@ -242,7 +242,7 @@ button {
   backface-visibility: hidden;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .recipe-back {
@@ -310,7 +310,7 @@ button {
   margin: 0;
   padding-left: 18px;
   line-height: 1.55;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   position: relative;
   z-index: 1;
 }
@@ -323,7 +323,7 @@ button {
 .side-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   position: relative;
   z-index: 1;
   height: 100%;
@@ -340,7 +340,7 @@ button {
 .notes-box p {
   margin: 8px 0 0;
   line-height: 1.55;
-  font-size: 0.96rem;
+  font-size: 0.98rem;
 }
 
 .mini-controls {
@@ -429,7 +429,7 @@ button {
 
 label {
   font-weight: 700;
-  font-size: 0.96rem;
+  font-size: 0.98rem;
 }
 
 input,
@@ -457,23 +457,24 @@ textarea {
   margin-top: 8px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .book-wrap {
-    width: min(66vw, 760px);
-    top: 58.5%;
+    top: 60.8%;
+    width: min(66vw, 820px);
+    transform: translate(-50%, -50%) perspective(1700px) rotateX(22deg) rotateY(-1deg) rotateZ(-1deg) skewX(-1.2deg);
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .scene {
     min-height: auto;
-    padding: 18px 14px 22px;
-    background-position: 70% center;
+    padding: 14px 12px 18px;
+    background-position: center top;
   }
 
   .toolbar {
     position: static;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     justify-content: center;
   }
 
@@ -483,24 +484,21 @@ textarea {
   }
 
   .brand {
-    max-width: none;
-    width: 100%;
+    max-width: min(92vw, 640px);
   }
 
   .book-wrap {
     position: relative;
     left: auto;
     top: auto;
-    width: 100%;
-    aspect-ratio: auto;
-    max-width: 760px;
-    margin: 8px auto 0;
+    width: min(94vw, 720px);
+    margin: 0 auto;
     transform: none;
+    aspect-ratio: auto;
   }
 
   .book-shell {
     grid-template-columns: 1fr;
-    border-radius: 22px;
   }
 
   .book-shell::before {
@@ -508,7 +506,15 @@ textarea {
   }
 
   .page {
-    min-height: 420px;
+    min-height: auto;
+  }
+
+  .page-left {
+    padding-bottom: 10px;
+  }
+
+  .page-right {
+    padding-top: 10px;
   }
 
   .recipe-face,
@@ -537,11 +543,56 @@ textarea {
     display: none;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
   .mini-controls {
     justify-content: center;
   }
+
+  .counter {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .modal-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
+
+@media (max-width: 560px) {
+  .brand h1 {
+    font-size: 2rem;
+  }
+
+  .cover-image {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .recipe-title {
+    font-size: 2.2rem;
+  }
+
+  .recipe-desc,
+  .ingredients-list,
+  .steps-list,
+  .notes-box p,
+  .counter {
+    font-size: 1rem;
+  }
+
+  .chip,
+  .wood-btn,
+  .nav-btn,
+  .flip-btn,
+  .pill-btn {
+    padding: 12px 15px;
+  }
+}
+
+
+
