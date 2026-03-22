@@ -394,11 +394,247 @@ textarea { min-height: 120px; resize: vertical; line-height: 1.45; }
 }
 
 
+
+
+/* Mobile / small tablet fixes */
 @media (max-width: 900px) {
+  html, body {
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  .scene {
+    min-height: 100vh;
+    padding: 14px 10px 18px;
+    background-position: center top;
+  }
+
+  .toolbar {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .brand {
+    width: 100%;
+    max-width: none;
+    padding: 14px 16px;
+    border-radius: 22px;
+  }
+
+  .brand h1 {
+    font-size: clamp(2rem, 7.5vw, 3.2rem);
+    line-height: 0.95;
+    white-space: normal;
+  }
+
+  .brand-sub {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .toolbar-right {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .chip-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 2px 2px 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip, .wood-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .wood-btn {
+    align-self: flex-start;
+  }
+
   .book-wrap {
-    top: 57%;
-    width: min(92vw, 980px);
-    aspect-ratio: 1.42 / 1;
-    transform: translate(-50%, -50%) rotateZ(-0.4deg);
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+
+  .book-shell {
+    grid-template-columns: 1fr;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .book-shell::before,
+  .page::before,
+  .page-left::before,
+  .page-right::before {
+    display: none;
+  }
+
+  .page {
+    padding: 16px 14px 14px;
+    min-height: auto;
+  }
+
+  .page-right {
+    padding-top: 0;
+  }
+
+  .recipe-card,
+  .recipe-inner,
+  .recipe-face,
+  .recipe-back {
+    position: relative;
+    height: auto;
+    min-height: 0;
+  }
+
+  .recipe-inner,
+  .recipe-card.flipped .recipe-inner {
+    transform: none;
+  }
+
+  .recipe-back {
+    display: none;
+  }
+
+  .recipe-card.flipped .recipe-front {
+    display: none;
+  }
+
+  .recipe-card.flipped .recipe-back {
+    display: flex;
+  }
+
+  .cover-image {
+    height: auto;
+    aspect-ratio: 4 / 3;
+    min-height: 180px;
+    max-height: 320px;
+  }
+
+  .recipe-title {
+    font-size: clamp(2rem, 7vw, 2.8rem);
+  }
+
+  .recipe-desc,
+  .ingredients-list,
+  .steps-list,
+  .notes-box p,
+  .counter {
+    font-size: 1rem;
+  }
+
+  .side-panel {
+    gap: 12px;
+  }
+
+  .notes-box {
+    padding: 14px;
+  }
+
+  .mini-controls {
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav-btn,
+  .flip-btn {
+    min-width: 90px;
+  }
+
+  .counter {
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 4px;
+  }
+
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-height: 92vh;
+    padding: 18px 14px;
+    border-radius: 20px;
+  }
+
+  .modal-head {
+    gap: 10px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .scene {
+    padding: 12px 8px 14px;
+  }
+
+  .brand {
+    padding: 12px 14px;
+  }
+
+  .brand h1 {
+    font-size: clamp(1.7rem, 8vw, 2.5rem);
+  }
+
+  .brand-sub {
+    font-size: 0.86rem;
+  }
+
+  .page {
+    padding: 12px 10px 12px;
+  }
+
+  .cover-image {
+    min-height: 150px;
+  }
+
+  .recipe-title {
+    font-size: clamp(1.75rem, 7.8vw, 2.3rem);
+  }
+
+  .chip, .wood-btn, .nav-btn, .flip-btn, .pill-btn {
+    padding: 10px 14px;
+  }
+
+  .meta-line {
+    gap: 8px;
+  }
+
+  .meta-pill {
+    font-size: 0.78rem;
+    padding: 7px 10px;
   }
 }
