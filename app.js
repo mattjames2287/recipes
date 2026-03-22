@@ -37,7 +37,14 @@ function loadLocalRecipes() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    const cleaned = parsed
+      .map(normalizeRecipe)
+      .filter((recipe) => String(recipe.title || "").trim().toLowerCase() !== "test");
+    if (cleaned.length !== parsed.length) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch (error) {
     console.warn("Could not load local recipes", error);
     return [];
@@ -49,7 +56,15 @@ function saveLocalRecipes() {
 }
 
 function allRecipes() {
-  return [...userRecipes, ...starterRecipes];
+  const seen = new Set();
+  return [...userRecipes, ...starterRecipes].filter((recipe) => {
+    const key = String(recipe.title || "").trim().toLowerCase();
+    if (!key) return false;
+    if (key === "test") return false;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function filteredRecipes() {
