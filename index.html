@@ -1,1 +1,137 @@
-<html><body><h1>Bari Family Cook Book</h1><script src='app.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bari Family Cook Book</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scene">
+    <header class="toolbar">
+      <div class="brand">
+        <h1>Bari Family Cook Book</h1>
+        <p class="brand-sub">Fresh, simple, flip-through recipes right on the counter.</p>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="chip-row" id="categoryRow"></div>
+        <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
+      </div>
+    </header>
+
+    <main class="book-wrap">
+      <div class="book-shell">
+        <section class="page page-left">
+          <div class="recipe-card" id="recipeCard">
+            <div class="recipe-inner">
+              <article class="recipe-face recipe-front">
+                <img class="cover-image" id="recipeImage" alt="Recipe image" />
+                <div>
+                  <div class="eyebrow" id="recipeCategory">Recipe</div>
+                  <h2 class="recipe-title" id="recipeTitle">Loading recipe…</h2>
+                </div>
+                <p class="recipe-desc" id="recipeDescription">Recipe details will appear here.</p>
+                <div class="meta-line">
+                  <div class="meta-pill" id="recipeCount">1 / 1</div>
+                  <div class="meta-pill">Flip for ingredients</div>
+                </div>
+              </article>
+
+              <article class="recipe-face recipe-back">
+                <div>
+                  <div class="eyebrow">Ingredients</div>
+                  <h3 class="section-title">What you need</h3>
+                  <ul class="ingredients-list" id="ingredientsList"></ul>
+                </div>
+
+                <div>
+                  <div class="eyebrow">Directions</div>
+                  <h3 class="section-title">How to make it</h3>
+                  <ol class="steps-list" id="stepsList"></ol>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="page page-right">
+          <div class="side-panel">
+            <div class="notes-box hidden" id="notesBox">
+              <div class="eyebrow">Recipe Notes</div>
+              <h3 class="section-title">Family kitchen edition</h3>
+              <p id="recipeNotes"></p>
+            </div>
+
+            <div class="mini-controls">
+              <button class="nav-btn" id="prevBtn" type="button">← Prev</button>
+              <button class="flip-btn" id="flipBtn" type="button">Flip</button>
+              <button class="nav-btn" id="nextBtn" type="button">Next →</button>
+            </div>
+            <div class="counter" id="counterText"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="recipeModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2>Add a recipe</h2>
+          <p>Add one ingredient per line and one direction per line.</p>
+        </div>
+        <button class="icon-close" id="closeFormBtn" type="button" aria-label="Close form">×</button>
+      </div>
+
+      <form id="recipeForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="title">Recipe title</label>
+            <input id="title" name="title" required placeholder="Garlic Butter Pasta" />
+          </div>
+
+          <div class="field">
+            <label>Category</label>
+            <input id="category" name="category" type="hidden" value="Dinner" />
+            <div class="pill-selector" id="formCategoryPills"></div>
+          </div>
+
+          <div class="field field-full">
+            <label for="description">Short description</label>
+            <input id="description" name="description" placeholder="Simple pasta with garlic, butter, and parmesan." />
+          </div>
+
+          <div class="field field-full">
+            <label for="image">Image URL or image path</label>
+            <input id="image" name="image" placeholder="assets/images/garlic-butter-pasta.jpg" />
+          </div>
+
+          <div class="field field-full">
+            <label for="ingredients">Ingredients</label>
+            <textarea id="ingredients" name="ingredients" required placeholder="12 oz pasta&#10;4 tbsp butter&#10;4 garlic cloves&#10;Salt&#10;Parmesan"></textarea>
+          </div>
+
+          <div class="field field-full">
+            <label for="steps">Directions</label>
+            <textarea id="steps" name="steps" required placeholder="Boil pasta.&#10;Melt butter and cook garlic.&#10;Toss pasta in sauce.&#10;Finish with parmesan."></textarea>
+          </div>
+
+          <div class="field field-full">
+            <label for="notes">Extra notes</label>
+            <textarea id="notes" name="notes" placeholder="Optional note"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="chip" id="cancelBtn" type="button">Cancel</button>
+          <button class="wood-btn" type="submit">Save Recipe</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
