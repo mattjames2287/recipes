@@ -1,44 +1,143 @@
 [
   {
-    "title": "Garlic Butter Pasta",
-    "category": "Dinner",
-    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1200&q=80",
-    "description": "Silky pasta with garlic, butter, parmesan, and black pepper.",
+    "title": "Chocolate Chip Cookies",
+    "category": "Dessert",
+    "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e",
     "ingredients": [
-      "12 oz pasta",
-      "4 tbsp butter",
-      "4 garlic cloves, minced",
-      "1/2 cup grated parmesan",
-      "Salt and black pepper"
+      "8 tbsp salted butter",
+      "1/2 cup white sugar",
+      "1/4 cup brown sugar",
+      "1 tsp vanilla",
+      "1 egg",
+      "1 1/2 cups flour",
+      "1/2 tsp baking soda",
+      "1/4 tsp salt",
+      "3/4 cup chocolate chips"
     ],
     "steps": [
-      "Boil pasta in salted water until al dente.",
-      "Melt butter in a skillet and cook garlic for about 30 seconds.",
-      "Add drained pasta and a splash of pasta water.",
-      "Stir in parmesan, salt, and pepper until glossy.",
-      "Serve warm."
+      "Preheat oven to 350",
+      "Melt butter",
+      "Mix sugars + butter",
+      "Add egg + vanilla",
+      "Add dry ingredients",
+      "Add chocolate chips",
+      "Bake 9\u201311 minutes"
     ],
-    "notes": "Add parsley or red pepper flakes if you want a little extra color and heat."
+    "tags": [
+      "Family Favorite",
+      "Dessert",
+      "Holiday"
+    ]
   },
   {
-    "title": "Blueberry Pancakes",
-    "category": "Breakfast",
-    "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1200&q=80",
-    "description": "Fluffy pancakes with juicy blueberries and a golden edge.",
+    "title": "Garlic Parmesan Chicken Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5",
     "ingredients": [
-      "2 cups flour",
-      "2 tbsp sugar",
-      "2 tsp baking powder",
-      "2 eggs",
-      "1 3/4 cups milk",
-      "1 cup blueberries"
+      "Parmesan garlic sauce",
+      "2 lbs chicken",
+      "1 cup milk",
+      "8 oz cream cheese",
+      "4 oz parmesan",
+      "12 oz pasta"
     ],
     "steps": [
-      "Whisk dry ingredients in a bowl.",
-      "Mix eggs and milk, then combine with dry ingredients.",
-      "Fold in blueberries gently.",
-      "Cook on a buttered griddle until golden on both sides."
+      "Add chicken + sauce",
+      "Add milk + cheese",
+      "Cook",
+      "Shred chicken",
+      "Cook pasta",
+      "Combine"
     ],
-    "notes": "Let the batter rest for 5 minutes before cooking for a fluffier texture."
+    "tags": [
+      "Dinner",
+      "Crock Pot",
+      "Family Favorite"
+    ]
+  },
+  {
+    "title": "Raspberry Custard Pie",
+    "category": "Dessert",
+    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+    "ingredients": [
+      "Pie crust",
+      "4 cups raspberries",
+      "3 eggs",
+      "1 1/3 cup sugar",
+      "1/4 cup flour",
+      "1 cup milk",
+      "1 tbsp vanilla"
+    ],
+    "steps": [
+      "Preheat 375",
+      "Mix ingredients",
+      "Add raspberries to crust",
+      "Pour mixture",
+      "Bake 45 min",
+      "Cool completely"
+    ],
+    "tags": [
+      "Dessert",
+      "Holiday",
+      "Family Favorite"
+    ]
+  },
+  {
+    "title": "Creamy Pesto Chicken Pasta",
+    "category": "Dinner",
+    "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141",
+    "ingredients": [
+      "Chicken",
+      "Butter",
+      "Garlic",
+      "Penne",
+      "Broth",
+      "Milk",
+      "Cream cheese",
+      "Pesto",
+      "Parmesan",
+      "Spinach"
+    ],
+    "steps": [
+      "Cook chicken",
+      "Add pasta + broth",
+      "Simmer",
+      "Add sauce ingredients",
+      "Add spinach",
+      "Serve"
+    ],
+    "tags": [
+      "Dinner",
+      "Quick",
+      "Family Favorite"
+    ]
+  },
+  {
+    "title": "Crockpot Banana Bread",
+    "category": "Breakfast",
+    "image": "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa",
+    "ingredients": [
+      "Butter",
+      "Sugar",
+      "Brown sugar",
+      "Eggs",
+      "Bananas",
+      "Flour",
+      "Baking powder",
+      "Chocolate chips"
+    ],
+    "steps": [
+      "Mix wet",
+      "Mix dry",
+      "Combine",
+      "Add to crockpot",
+      "Cook 4 hours low",
+      "Cool"
+    ],
+    "tags": [
+      "Breakfast",
+      "Crock Pot",
+      "Family Favorite"
+    ]
   }
 ]
