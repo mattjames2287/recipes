@@ -22,14 +22,11 @@
       "Add dry ingredients",
       "Add chocolate chips",
       "Bake 9\u201311 minutes"
-<<<<<<< HEAD
     ],
     "tags": [
       "Family Favorite",
       "Dessert",
       "Holiday"
-=======
->>>>>>> 250163284462572887c783b471242fb5d401c31c
     ]
   },
   {
@@ -51,7 +48,6 @@
       "Shred chicken",
       "Cook pasta",
       "Combine"
-<<<<<<< HEAD
     ],
     "tags": [
       "Dinner",
@@ -72,23 +68,6 @@
       "1 cup milk",
       "1 tbsp vanilla"
     ],
-=======
-    ]
-  },
-  {
-    "title": "Raspberry Custard Pie",
-    "category": "Dessert",
-    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba",
-    "ingredients": [
-      "Pie crust",
-      "4 cups raspberries",
-      "3 eggs",
-      "1 1/3 cup sugar",
-      "1/4 cup flour",
-      "1 cup milk",
-      "1 tbsp vanilla"
-    ],
->>>>>>> 250163284462572887c783b471242fb5d401c31c
     "steps": [
       "Preheat 375",
       "Mix ingredients",
@@ -96,14 +75,11 @@
       "Pour mixture",
       "Bake 45 min",
       "Cool completely"
-<<<<<<< HEAD
     ],
     "tags": [
       "Dessert",
       "Holiday",
       "Family Favorite"
-=======
->>>>>>> 250163284462572887c783b471242fb5d401c31c
     ]
   },
   {
@@ -129,14 +105,11 @@
       "Add sauce ingredients",
       "Add spinach",
       "Serve"
-<<<<<<< HEAD
     ],
     "tags": [
       "Dinner",
       "Quick",
       "Family Favorite"
-=======
->>>>>>> 250163284462572887c783b471242fb5d401c31c
     ]
   },
   {
@@ -160,14 +133,11 @@
       "Add to crockpot",
       "Cook 4 hours low",
       "Cool"
-<<<<<<< HEAD
     ],
     "tags": [
       "Breakfast",
       "Crock Pot",
       "Family Favorite"
-=======
->>>>>>> 250163284462572887c783b471242fb5d401c31c
     ]
   }
 ]

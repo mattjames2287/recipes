@@ -1,6 +1,6 @@
 const STORAGE_KEY = "recipe-book-local-v1";
-const STARTER_DATA_PATH = "data/recipes.json";
-const CLOUD_ENDPOINT = "https://script.google.com/macros/s/AKfycbyVB4x_KkTwOE2Hv1JuJ5ZC5pifIk2Ozt_RIp-U8SC4ArH5bw-ZZMYxbFbpO3fLaC3Nvw/exec"; // Paste your Apps Script web app URL here
+const STARTER_DATA_PATHS = ["data/recipes.json", "data_recipes_tmp.json"];
+const CLOUD_ENDPOINT = ""; // Paste your Apps Script web app URL here
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80";
 const CATEGORY_OPTIONS = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"];
 const TAG_SUGGESTIONS = ["All", "Quick", "Family Favorite", "Holiday", "Crock Pot", "Dessert", "Dinner", "Breakfast"];
@@ -24,26 +24,6 @@ const searchInput = document.getElementById("searchInput");
 
 const recipeFront = document.querySelector(".recipe-front");
 const recipeBack = document.querySelector(".recipe-back");
-
-const recipeFront = document.querySelector(".recipe-front");
-const recipeBack = document.querySelector(".recipe-back");
-
-function isMobileView() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
-function syncFlipDisplay() {
-  if (!recipeFront || !recipeBack) return;
-  const flipped = recipeCard.classList.contains("flipped");
-  if (isMobileView()) {
-    recipeFront.style.display = flipped ? "none" : "flex";
-    recipeBack.style.display = flipped ? "flex" : "none";
-  } else {
-    recipeFront.style.display = "";
-    recipeBack.style.display = "";
-  }
-}
-
 
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
@@ -81,7 +61,7 @@ function isMobileView() {
 }
 
 function syncFlipDisplay() {
-  if (!recipeFront || !recipeBack) return;
+  if (!recipeFront || !recipeBack || !recipeCard) return;
   const flipped = recipeCard.classList.contains("flipped");
   if (isMobileView()) {
     recipeFront.style.display = flipped ? "none" : "flex";
@@ -97,7 +77,7 @@ function cloudEnabled() {
 }
 
 function setCloudStatus(message) {
-  cloudStatus.textContent = message;
+  if (cloudStatus) cloudStatus.textContent = message;
 }
 
 function setOcrStatus(message, state = "") {
@@ -113,18 +93,7 @@ function loadLocalRecipes() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-<<<<<<< HEAD
     return Array.isArray(parsed) ? parsed.map(normalizeRecipe) : [];
-=======
-    if (!Array.isArray(parsed)) return [];
-    const cleaned = parsed
-      .map(normalizeRecipe)
-      .filter((recipe) => String(recipe.title || "").trim().toLowerCase() !== "test");
-    if (cleaned.length !== parsed.length) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
-    }
-    return cleaned;
->>>>>>> 250163284462572887c783b471242fb5d401c31c
   } catch (error) {
     console.warn("Could not load local recipes", error);
     return [];
@@ -135,51 +104,30 @@ function saveLocalRecipes() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userRecipes));
 }
 
-<<<<<<< HEAD
-=======
-function allRecipes() {
-  const seen = new Set();
-  return [...userRecipes, ...starterRecipes].filter((recipe) => {
-    const key = String(recipe.title || "").trim().toLowerCase();
-    if (!key) return false;
-    if (key === "test") return false;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function filteredRecipes() {
-  const recipes = allRecipes();
-  if (activeCategory === "All") return recipes;
-  return recipes.filter((recipe) => recipe.category === activeCategory);
-}
-
->>>>>>> 250163284462572887c783b471242fb5d401c31c
 function ensureArray(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
 function parseTags(value) {
-  if (Array.isArray(value)) return value.map(tag => String(tag).trim()).filter(Boolean);
+  if (Array.isArray(value)) return value.map((tag) => String(tag).trim()).filter(Boolean);
   return String(value || "")
     .split(/[\n,]/)
-    .map(tag => tag.trim())
+    .map((tag) => tag.trim())
     .filter(Boolean);
 }
 
 function normalizeRecipe(recipe) {
-  const category = String(recipe.category || "Dinner").trim();
+  const category = String(recipe?.category || "Dinner").trim();
   return {
-    title: String(recipe.title || "Untitled Recipe").trim(),
+    title: String(recipe?.title || "Untitled Recipe").trim(),
     category: CATEGORY_OPTIONS.includes(category) ? category : "Dinner",
-    image: String(recipe.image || "").trim(),
-    description: String(recipe.description || "").trim(),
-    ingredients: ensureArray(recipe.ingredients),
-    steps: ensureArray(recipe.steps),
-    notes: String(recipe.notes || "").trim(),
-    tags: parseTags(recipe.tags),
-    createdAt: String(recipe.createdAt || "").trim()
+    image: String(recipe?.image || "").trim(),
+    description: String(recipe?.description || "").trim(),
+    ingredients: ensureArray(recipe?.ingredients),
+    steps: ensureArray(recipe?.steps),
+    notes: String(recipe?.notes || "").trim(),
+    tags: parseTags(recipe?.tags),
+    createdAt: String(recipe?.createdAt || "").trim()
   };
 }
 
@@ -216,6 +164,7 @@ function filteredRecipes() {
 }
 
 function renderList(items, target) {
+  if (!target) return;
   target.innerHTML = "";
   const fragment = document.createDocumentFragment();
   items.forEach((item) => {
@@ -227,6 +176,7 @@ function renderList(items, target) {
 }
 
 function renderPills(container, values, activeValue, onClick) {
+  if (!container) return;
   container.innerHTML = "";
   values.forEach((value) => {
     const button = document.createElement("button");
@@ -238,11 +188,16 @@ function renderPills(container, values, activeValue, onClick) {
   });
 }
 
+function resetToFirstRecipe() {
+  currentIndex = 0;
+  if (recipeCard) recipeCard.classList.remove("flipped");
+  syncFlipDisplay();
+}
+
 function renderCategories() {
   renderPills(categoryRow, ["All", ...CATEGORY_OPTIONS], activeCategory, (value) => {
     activeCategory = value;
-    currentIndex = 0;
-    recipeCard.classList.remove("flipped");
+    resetToFirstRecipe();
     renderCategories();
     renderRecipe();
   });
@@ -250,17 +205,17 @@ function renderCategories() {
 
 function renderTags() {
   const dynamic = new Set(TAG_SUGGESTIONS);
-  allRecipes().forEach(recipe => (recipe.tags || []).forEach(tag => dynamic.add(tag)));
+  allRecipes().forEach((recipe) => (recipe.tags || []).forEach((tag) => dynamic.add(tag)));
   renderPills(tagRow, Array.from(dynamic), activeTag, (value) => {
     activeTag = value;
-    currentIndex = 0;
-    recipeCard.classList.remove("flipped");
+    resetToFirstRecipe();
     renderTags();
     renderRecipe();
   });
 }
 
 function renderRecipeTags(tags) {
+  if (!recipeTagChips) return;
   recipeTagChips.innerHTML = "";
   (tags || []).forEach((tag) => {
     const pill = document.createElement("div");
@@ -271,6 +226,7 @@ function renderRecipeTags(tags) {
 }
 
 function renderFormCategoryPills() {
+  if (!formCategoryPills || !categoryInput) return;
   formCategoryPills.innerHTML = "";
   CATEGORY_OPTIONS.forEach((category) => {
     const button = document.createElement("button");
@@ -288,17 +244,19 @@ function renderFormCategoryPills() {
 function renderRecipe() {
   const recipes = filteredRecipes();
   if (!recipes.length) {
-    recipeImage.src = FALLBACK_IMAGE;
-    recipeImage.alt = "No recipe available";
-    recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
-    recipeTitle.textContent = "No recipes match right now";
-    recipeDescription.textContent = "Try clearing a filter, changing the tag, or adding a new recipe.";
-    ingredientsList.innerHTML = "";
-    stepsList.innerHTML = "";
-    recipeTagChips.innerHTML = "";
-    notesBox.classList.add("hidden");
-    recipeCount.textContent = "0 / 0";
-    counterText.textContent = "No recipes found";
+    if (recipeImage) {
+      recipeImage.src = FALLBACK_IMAGE;
+      recipeImage.alt = "No recipe available";
+    }
+    if (recipeCategory) recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
+    if (recipeTitle) recipeTitle.textContent = "No recipes match right now";
+    if (recipeDescription) recipeDescription.textContent = "Try clearing a filter, changing the tag, or adding a new recipe.";
+    if (ingredientsList) ingredientsList.innerHTML = "";
+    if (stepsList) stepsList.innerHTML = "";
+    if (recipeTagChips) recipeTagChips.innerHTML = "";
+    if (notesBox) notesBox.classList.add("hidden");
+    if (recipeCount) recipeCount.textContent = "0 / 0";
+    if (counterText) counterText.textContent = "No recipes found";
     syncFlipDisplay();
     return;
   }
@@ -307,21 +265,25 @@ function renderRecipe() {
   if (currentIndex < 0) currentIndex = recipes.length - 1;
 
   const recipe = recipes[currentIndex];
-  recipeImage.src = recipe.image || FALLBACK_IMAGE;
-  recipeImage.alt = recipe.title || "Recipe image";
-  recipeCategory.textContent = recipe.category || "Recipe";
-  recipeTitle.textContent = recipe.title || "Untitled Recipe";
-  recipeDescription.textContent = recipe.description || "";
-  renderRecipeTags(recipe.tags || []);
-  if (recipe.notes) {
-    notesBox.classList.remove("hidden");
-    recipeNotes.textContent = recipe.notes;
-  } else {
-    notesBox.classList.add("hidden");
-    recipeNotes.textContent = "";
+  if (recipeImage) {
+    recipeImage.src = recipe.image || FALLBACK_IMAGE;
+    recipeImage.alt = recipe.title || "Recipe image";
   }
-  recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
-  counterText.textContent = `${recipes.length} recipe${recipes.length === 1 ? "" : "s"} shown`;
+  if (recipeCategory) recipeCategory.textContent = recipe.category || "Recipe";
+  if (recipeTitle) recipeTitle.textContent = recipe.title || "Untitled Recipe";
+  if (recipeDescription) recipeDescription.textContent = recipe.description || "";
+  renderRecipeTags(recipe.tags || []);
+
+  if (recipe.notes) {
+    if (notesBox) notesBox.classList.remove("hidden");
+    if (recipeNotes) recipeNotes.textContent = recipe.notes;
+  } else {
+    if (notesBox) notesBox.classList.add("hidden");
+    if (recipeNotes) recipeNotes.textContent = "";
+  }
+
+  if (recipeCount) recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
+  if (counterText) counterText.textContent = `${recipes.length} recipe${recipes.length === 1 ? "" : "s"} shown`;
 
   renderList(recipe.ingredients || [], ingredientsList);
   renderList(recipe.steps || [], stepsList);
@@ -329,19 +291,23 @@ function renderRecipe() {
 }
 
 function openModal() {
+  if (!recipeModal) return;
   recipeModal.classList.add("show");
   recipeModal.setAttribute("aria-hidden", "false");
   renderFormCategoryPills();
 }
 
 function closeModal() {
+  if (!recipeModal || !recipeForm || !categoryInput) return;
   recipeModal.classList.remove("show");
   recipeModal.setAttribute("aria-hidden", "true");
   recipeForm.reset();
   categoryInput.value = "Dinner";
   renderFormCategoryPills();
-  photoPreview.classList.add("hidden");
-  photoPreview.removeAttribute("src");
+  if (photoPreview) {
+    photoPreview.classList.add("hidden");
+    photoPreview.removeAttribute("src");
+  }
   setOcrStatus("");
 }
 
@@ -354,7 +320,7 @@ function parseLines(value) {
 
 async function fileToDataUrl(file) {
   if (!file) return "";
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ""));
     reader.onerror = reject;
@@ -362,84 +328,106 @@ async function fileToDataUrl(file) {
   });
 }
 
-async function loadStarterRecipes() {
-  if (cloudEnabled()) {
+async function fetchCloudRecipes() {
+  const response = await fetch(`${CLOUD_ENDPOINT}?action=list&t=${Date.now()}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const data = await response.json();
+  if (!data || !Array.isArray(data.recipes)) throw new Error("Invalid cloud response");
+  return data.recipes.map(normalizeRecipe);
+}
+
+async function tryLoadBuiltInRecipes() {
+  for (const path of STARTER_DATA_PATHS) {
     try {
-      const response = await fetch(`${CLOUD_ENDPOINT}?action=list`, { cache: "no-store" });
+      const response = await fetch(path, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      starterRecipes = Array.isArray(data.recipes) ? data.recipes.map(normalizeRecipe) : [];
-      setCloudStatus("Cloud sync is live. Recipes save to the shared sheet for both phones.");
-      renderCategories();
-      renderTags();
-      renderRecipe();
-      return;
+      if (Array.isArray(data)) {
+        starterRecipes = data.map(normalizeRecipe);
+        return true;
+      }
     } catch (error) {
-      console.warn("Cloud recipe load failed, falling back to local JSON.", error);
-      setCloudStatus("Cloud URL is set, but loading failed. Using built-in recipes right now.");
+      console.warn(`Could not load starter recipes from ${path}`, error);
+    }
+  }
+  starterRecipes = [];
+  return false;
+}
+
+async function refreshRecipeSources(options = {}) {
+  const { preserveIndex = false } = options;
+  const previousTitle = preserveIndex ? filteredRecipes()[currentIndex]?.title : "";
+
+  if (cloudEnabled()) {
+    try {
+      starterRecipes = await fetchCloudRecipes();
+      setCloudStatus("Cloud sync is live. This cookbook now loads and saves through your shared sheet.");
+    } catch (error) {
+      console.warn("Cloud recipe load failed, falling back to built-in and local recipes.", error);
+      setCloudStatus("Cloud URL is set, but loading failed. Using built-in and local recipes right now.");
+      await tryLoadBuiltInRecipes();
     }
   } else {
     setCloudStatus("Cloud sync is off until you paste your Apps Script web app URL into app.js.");
+    await tryLoadBuiltInRecipes();
   }
 
-  try {
-    const response = await fetch(STARTER_DATA_PATH, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    starterRecipes = Array.isArray(data) ? data.map(normalizeRecipe) : [];
-  } catch (error) {
-    console.warn("Could not load starter recipe JSON", error);
-    starterRecipes = [];
-  }
   renderCategories();
   renderTags();
+
+  const recipes = filteredRecipes();
+  if (preserveIndex && previousTitle) {
+    const matchIndex = recipes.findIndex((recipe) => recipe.title === previousTitle);
+    currentIndex = matchIndex >= 0 ? matchIndex : 0;
+  } else if (currentIndex >= recipes.length) {
+    currentIndex = 0;
+  }
+
   renderRecipe();
 }
 
 function showPrevRecipe() {
   currentIndex -= 1;
-  recipeCard.classList.remove("flipped");
+  if (recipeCard) recipeCard.classList.remove("flipped");
   syncFlipDisplay();
   renderRecipe();
 }
 
 function showNextRecipe() {
   currentIndex += 1;
-  recipeCard.classList.remove("flipped");
+  if (recipeCard) recipeCard.classList.remove("flipped");
   syncFlipDisplay();
   renderRecipe();
 }
 
 function toggleFlip() {
+  if (!recipeCard) return;
   recipeCard.classList.toggle("flipped");
   syncFlipDisplay();
-<<<<<<< HEAD
 }
 
 async function saveRecipe(recipe, imageData) {
   if (cloudEnabled()) {
     const payload = { action: "add", recipe };
-    if (imageData) {
-      payload.imageDataUrl = imageData;
-    }
+    if (imageData) payload.imageDataUrl = imageData;
+
     const response = await fetch(CLOUD_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
     const data = await response.json();
     if (!data.ok) throw new Error(data.error || "Cloud save failed");
-    if (data.recipe) {
-      starterRecipes.unshift(normalizeRecipe(data.recipe));
-    } else {
-      starterRecipes.unshift(recipe);
-    }
-    return;
+
+    await refreshRecipeSources();
+    return data.recipe ? normalizeRecipe(data.recipe) : recipe;
   }
 
   userRecipes.unshift(recipe);
   saveLocalRecipes();
+  return recipe;
 }
 
 function normalizeOcrText(text) {
@@ -460,15 +448,11 @@ function toTitleCase(str) {
 
 function detectTitle(lines) {
   if (!lines.length) return "";
-
   for (const line of lines.slice(0, 6)) {
     const lower = line.toLowerCase();
-    if (/(ingredients?|directions?|instructions?|method|prep time|cook time|servings?)/.test(lower)) {
-      continue;
-    }
+    if (/(ingredients?|directions?|instructions?|method|prep time|cook time|servings?)/.test(lower)) continue;
     if (line.length >= 3 && line.length <= 70) return toTitleCase(line);
   }
-
   return toTitleCase(lines[0]);
 }
 
@@ -484,9 +468,7 @@ function looksLikeStep(line) {
 }
 
 function cleanupIngredients(lines) {
-  return lines
-    .map((line) => line.replace(/^[-*]\s*/, "").trim())
-    .filter(Boolean);
+  return lines.map((line) => line.replace(/^[-*]\s*/, "").trim()).filter(Boolean);
 }
 
 function cleanupDirections(lines) {
@@ -540,7 +522,6 @@ function splitIngredientsAndDirections(lines) {
 
 function suggestCategory(title, ingredients, directions) {
   const haystack = `${title}\n${ingredients.join(" ")}\n${directions.join(" ")}`.toLowerCase();
-
   if (/\b(pancake|waffle|omelet|omelette|oatmeal|breakfast|french toast|muffin|banana bread|coffee cake)\b/.test(haystack)) return "Breakfast";
   if (/\b(cookie|cake|brownie|dessert|pie|frosting|cobbler|cupcake|pudding)\b/.test(haystack)) return "Dessert";
   if (/\b(lemonade|smoothie|tea|latte|coffee|punch|drink|cocktail|mocktail)\b/.test(haystack)) return "Drinks";
@@ -593,14 +574,13 @@ function mergeTags(currentValue, newTags) {
 
 function applyParsedRecipeToForm(parsed) {
   if (!parsed) return;
+  if (titleInput) titleInput.value = parsed.title || titleInput.value;
+  if (descriptionInput) descriptionInput.value = parsed.description || descriptionInput.value;
+  if (ingredientsInput && parsed.ingredients?.length) ingredientsInput.value = parsed.ingredients.join("\n");
+  if (stepsInput && parsed.steps?.length) stepsInput.value = parsed.steps.join("\n");
+  if (tagsInput) tagsInput.value = mergeTags(tagsInput.value, parsed.tags || []);
 
-  titleInput.value = parsed.title || titleInput.value;
-  descriptionInput.value = parsed.description || descriptionInput.value;
-  if (parsed.ingredients && parsed.ingredients.length) ingredientsInput.value = parsed.ingredients.join("\n");
-  if (parsed.steps && parsed.steps.length) stepsInput.value = parsed.steps.join("\n");
-  tagsInput.value = mergeTags(tagsInput.value, parsed.tags || []);
-
-  if (parsed.category && CATEGORY_OPTIONS.includes(parsed.category)) {
+  if (parsed.category && CATEGORY_OPTIONS.includes(parsed.category) && categoryInput) {
     categoryInput.value = parsed.category;
     renderFormCategoryPills();
   }
@@ -647,11 +627,9 @@ async function preprocessImageForOCR(file) {
     const r = data[i];
     const g = data[i + 1];
     const b = data[i + 2];
-
     let gray = (0.299 * r) + (0.587 * g) + (0.114 * b);
     gray = ((gray - 128) * 1.35) + 128;
     gray = gray > 160 ? 255 : 0;
-
     data[i] = gray;
     data[i + 1] = gray;
     data[i + 2] = gray;
@@ -659,7 +637,7 @@ async function preprocessImageForOCR(file) {
 
   ctx.putImageData(imageData, 0, 0);
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) resolve(blob);
       else reject(new Error("Could not prepare image for OCR"));
@@ -674,15 +652,16 @@ async function importRecipeFromPhoto(file) {
   try {
     setOcrStatus("Preparing image...", "busy");
     const previewUrl = await fileToDataUrl(file);
-    photoPreview.src = previewUrl;
-    photoPreview.classList.remove("hidden");
+    if (photoPreview) {
+      photoPreview.src = previewUrl;
+      photoPreview.classList.remove("hidden");
+    }
 
     const processedImage = await preprocessImageForOCR(file);
-
     setOcrStatus("Reading recipe text...", "busy");
     const worker = await getOcrWorker();
     const result = await worker.recognize(processedImage);
-    const rawText = result && result.data && result.data.text ? result.data.text : "";
+    const rawText = result?.data?.text || "";
 
     if (!rawText.trim()) {
       throw new Error("No readable text found in image");
@@ -690,99 +669,125 @@ async function importRecipeFromPhoto(file) {
 
     setOcrStatus("Organizing recipe into fields...", "busy");
     const parsed = parseRecipeText(rawText);
+    applyParsedRecipeToForm(parsed);
 
     if (!parsed.ingredients.length || !parsed.steps.length) {
       setOcrStatus("Text was found, but please check ingredients and directions carefully before saving.", "error");
     } else {
       setOcrStatus("Recipe imported. Review and edit anything before saving.");
     }
-
-    applyParsedRecipeToForm(parsed);
   } catch (error) {
     console.error("OCR import failed", error);
     setOcrStatus("Could not read this image clearly. Try a sharper photo or fill the form manually.", "error");
   } finally {
     ocrInProgress = false;
   }
-=======
->>>>>>> 250163284462572887c783b471242fb5d401c31c
 }
 
-prevBtn.onclick = showPrevRecipe;
-nextBtn.onclick = showNextRecipe;
-flipBtn.onclick = toggleFlip;
+function bindEvents() {
+  prevBtn?.addEventListener("click", showPrevRecipe);
+  nextBtn?.addEventListener("click", showNextRecipe);
+  flipBtn?.addEventListener("click", toggleFlip);
+  openFormBtn?.addEventListener("click", openModal);
+  closeFormBtn?.addEventListener("click", closeModal);
+  cancelBtn?.addEventListener("click", closeModal);
 
-openFormBtn.addEventListener("click", openModal);
-closeFormBtn.addEventListener("click", closeModal);
-cancelBtn.addEventListener("click", closeModal);
-
-searchInput.addEventListener("input", (event) => {
-  searchTerm = String(event.target.value || "").trim().toLowerCase();
-  currentIndex = 0;
-  recipeCard.classList.remove("flipped");
-  renderRecipe();
-});
-
-recipeModal.addEventListener("click", (event) => {
-  if (event.target === recipeModal) closeModal();
-});
-
-window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && recipeModal.classList.contains("show")) closeModal();
-});
-
-photoInput.addEventListener("change", async () => {
-  const file = photoInput.files && photoInput.files[0];
-  if (!file) {
-    photoPreview.classList.add("hidden");
-    photoPreview.removeAttribute("src");
-    setOcrStatus("");
-    return;
-  }
-  await importRecipeFromPhoto(file);
-});
-
-recipeForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(recipeForm);
-  const file = photoInput.files && photoInput.files[0];
-  const imageData = file ? await fileToDataUrl(file) : "";
-  const newRecipe = normalizeRecipe({
-    title: formData.get("title"),
-    category: formData.get("category"),
-    description: formData.get("description"),
-    image: formData.get("image"),
-    ingredients: parseLines(formData.get("ingredients")),
-    steps: parseLines(formData.get("steps")),
-    notes: formData.get("notes"),
-    tags: parseTags(formData.get("tags")),
-    createdAt: new Date().toISOString()
-  });
-  if (!newRecipe.title || !newRecipe.ingredients.length || !newRecipe.steps.length) return;
-
-  try {
-    await saveRecipe(newRecipe, imageData);
-    activeCategory = "All";
-    activeTag = "All";
-    searchTerm = "";
-    searchInput.value = "";
-    currentIndex = 0;
-    recipeCard.classList.remove("flipped");
-    renderCategories();
-    renderTags();
+  searchInput?.addEventListener("input", (event) => {
+    searchTerm = String(event.target.value || "").trim().toLowerCase();
+    resetToFirstRecipe();
     renderRecipe();
-    closeModal();
-  } catch (error) {
-    console.error(error);
-    alert("Recipe save failed. Check your cloud URL if you turned cloud sync on.");
-  }
-});
+  });
 
-window.addEventListener("resize", syncFlipDisplay);
+  searchInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchTerm = String(searchInput.value || "").trim().toLowerCase();
+      resetToFirstRecipe();
+      renderRecipe();
+      searchInput.blur();
+    }
+  });
 
-renderCategories();
-renderTags();
-renderFormCategoryPills();
-renderRecipe();
-syncFlipDisplay();
-loadStarterRecipes();
+  recipeModal?.addEventListener("click", (event) => {
+    if (event.target === recipeModal) closeModal();
+  });
+
+  window.addEventListener("keydown", (event) => {
+    const modalOpen = recipeModal?.classList.contains("show");
+    if (event.key === "Escape" && modalOpen) {
+      closeModal();
+      return;
+    }
+    if (modalOpen) return;
+    if (event.key === "ArrowLeft") showPrevRecipe();
+    if (event.key === "ArrowRight") showNextRecipe();
+    if (event.key.toLowerCase() === "f") toggleFlip();
+  });
+
+  photoInput?.addEventListener("change", async () => {
+    const file = photoInput.files && photoInput.files[0];
+    if (!file) {
+      photoPreview?.classList.add("hidden");
+      photoPreview?.removeAttribute("src");
+      setOcrStatus("");
+      return;
+    }
+    await importRecipeFromPhoto(file);
+  });
+
+  recipeForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(recipeForm);
+    const file = photoInput?.files && photoInput.files[0];
+    const imageData = file ? await fileToDataUrl(file) : "";
+
+    const newRecipe = normalizeRecipe({
+      title: formData.get("title"),
+      category: formData.get("category"),
+      description: formData.get("description"),
+      image: formData.get("image"),
+      ingredients: parseLines(formData.get("ingredients")),
+      steps: parseLines(formData.get("steps")),
+      notes: formData.get("notes"),
+      tags: parseTags(formData.get("tags")),
+      createdAt: new Date().toISOString()
+    });
+
+    if (!newRecipe.title || !newRecipe.ingredients.length || !newRecipe.steps.length) return;
+
+    try {
+      await saveRecipe(newRecipe, imageData);
+      activeCategory = "All";
+      activeTag = "All";
+      searchTerm = "";
+      if (searchInput) searchInput.value = "";
+      resetToFirstRecipe();
+      renderCategories();
+      renderTags();
+      renderRecipe();
+      closeModal();
+    } catch (error) {
+      console.error(error);
+      alert("Recipe save failed. Check your Apps Script URL if cloud sync is turned on.");
+    }
+  });
+
+  window.addEventListener("resize", syncFlipDisplay);
+}
+
+function init() {
+  bindEvents();
+  renderCategories();
+  renderTags();
+  renderFormCategoryPills();
+  renderRecipe();
+  syncFlipDisplay();
+  refreshRecipeSources();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
