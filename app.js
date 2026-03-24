@@ -1,6 +1,6 @@
 const STORAGE_KEY = "recipe-book-local-v1";
 const STARTER_DATA_PATH = "data/recipes.json";
-const CLOUD_ENDPOINT = ""; // Paste your Apps Script web app URL here
+const CLOUD_ENDPOINT = "https://script.google.com/macros/s/AKfycbyVB4x_KkTwOE2Hv1JuJ5ZC5pifIk2Ozt_RIp-U8SC4ArH5bw-ZZMYxbFbpO3fLaC3Nvw/exec"; // Paste your Apps Script web app URL here
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80";
 const CATEGORY_OPTIONS = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"];
 const TAG_SUGGESTIONS = ["All", "Quick", "Family Favorite", "Holiday", "Crock Pot", "Dessert", "Dinner", "Breakfast"];
