@@ -25,6 +25,26 @@ const searchInput = document.getElementById("searchInput");
 const recipeFront = document.querySelector(".recipe-front");
 const recipeBack = document.querySelector(".recipe-back");
 
+const recipeFront = document.querySelector(".recipe-front");
+const recipeBack = document.querySelector(".recipe-back");
+
+function isMobileView() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function syncFlipDisplay() {
+  if (!recipeFront || !recipeBack) return;
+  const flipped = recipeCard.classList.contains("flipped");
+  if (isMobileView()) {
+    recipeFront.style.display = flipped ? "none" : "flex";
+    recipeBack.style.display = flipped ? "flex" : "none";
+  } else {
+    recipeFront.style.display = "";
+    recipeBack.style.display = "";
+  }
+}
+
+
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const flipBtn = document.getElementById("flipBtn");
@@ -93,7 +113,18 @@ function loadLocalRecipes() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
+<<<<<<< HEAD
     return Array.isArray(parsed) ? parsed.map(normalizeRecipe) : [];
+=======
+    if (!Array.isArray(parsed)) return [];
+    const cleaned = parsed
+      .map(normalizeRecipe)
+      .filter((recipe) => String(recipe.title || "").trim().toLowerCase() !== "test");
+    if (cleaned.length !== parsed.length) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
+>>>>>>> 250163284462572887c783b471242fb5d401c31c
   } catch (error) {
     console.warn("Could not load local recipes", error);
     return [];
@@ -104,6 +135,27 @@ function saveLocalRecipes() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userRecipes));
 }
 
+<<<<<<< HEAD
+=======
+function allRecipes() {
+  const seen = new Set();
+  return [...userRecipes, ...starterRecipes].filter((recipe) => {
+    const key = String(recipe.title || "").trim().toLowerCase();
+    if (!key) return false;
+    if (key === "test") return false;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function filteredRecipes() {
+  const recipes = allRecipes();
+  if (activeCategory === "All") return recipes;
+  return recipes.filter((recipe) => recipe.category === activeCategory);
+}
+
+>>>>>>> 250163284462572887c783b471242fb5d401c31c
 function ensureArray(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
@@ -361,6 +413,7 @@ function showNextRecipe() {
 function toggleFlip() {
   recipeCard.classList.toggle("flipped");
   syncFlipDisplay();
+<<<<<<< HEAD
 }
 
 async function saveRecipe(recipe, imageData) {
@@ -651,6 +704,8 @@ async function importRecipeFromPhoto(file) {
   } finally {
     ocrInProgress = false;
   }
+=======
+>>>>>>> 250163284462572887c783b471242fb5d401c31c
 }
 
 prevBtn.onclick = showPrevRecipe;
