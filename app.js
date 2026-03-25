@@ -41,6 +41,11 @@ const categoryInput = document.getElementById("category");
 const photoInput = document.getElementById("photo");
 const photoPreview = document.getElementById("photoPreview");
 const ocrStatus = document.getElementById("ocrStatus");
+const extractTextBtn = document.getElementById("extractTextBtn");
+const useOcrIngredientsBtn = document.getElementById("useOcrIngredientsBtn");
+const useOcrDirectionsBtn = document.getElementById("useOcrDirectionsBtn");
+const clearOcrBtn = document.getElementById("clearOcrBtn");
+const ocrText = document.getElementById("ocrText");
 
 const titleInput = document.getElementById("title");
 const descriptionInput = document.getElementById("description");
@@ -331,6 +336,7 @@ function closeModal() {
     photoPreview.removeAttribute("src");
   }
   setOcrStatus("");
+  if (ocrText) ocrText.value = "";
 }
 
 function parseLines(value) {
@@ -679,27 +685,20 @@ async function importRecipeFromPhoto(file) {
     }
 
     const processedImage = await preprocessImageForOCR(file);
-    setOcrStatus("Reading recipe text...", "busy");
+    setOcrStatus("Reading text from image...", "busy");
     const worker = await getOcrWorker();
     const result = await worker.recognize(processedImage);
-    const rawText = result?.data?.text || "";
+    const rawText = normalizeOcrText(result?.data?.text || "");
 
     if (!rawText.trim()) {
       throw new Error("No readable text found in image");
     }
 
-    setOcrStatus("Organizing recipe into fields...", "busy");
-    const parsed = parseRecipeText(rawText);
-    applyParsedRecipeToForm(parsed);
-
-    if (!parsed.ingredients.length || !parsed.steps.length) {
-      setOcrStatus("Text was found, but please check ingredients and directions carefully before saving.", "error");
-    } else {
-      setOcrStatus("Recipe imported. Review and edit anything before saving.");
-    }
+    if (ocrText) ocrText.value = rawText;
+    setOcrStatus("Text extracted. Review it, then use the buttons to place it where you want.");
   } catch (error) {
     console.error("OCR import failed", error);
-    setOcrStatus("Could not read this image clearly. Try a sharper photo or fill the form manually.", "error");
+    setOcrStatus("Could not read this image clearly. You can still type the recipe in manually.", "error");
   } finally {
     ocrInProgress = false;
   }
@@ -755,9 +754,50 @@ function bindEvents() {
       photoPreview?.classList.add("hidden");
       photoPreview?.removeAttribute("src");
       setOcrStatus("");
+      if (ocrText) ocrText.value = "";
+      return;
+    }
+
+    const previewUrl = await fileToDataUrl(file);
+    if (photoPreview) {
+      photoPreview.src = previewUrl;
+      photoPreview.classList.remove("hidden");
+    }
+    setOcrStatus("Image ready. Tap Extract Text if you want OCR help, or just type your recipe manually.");
+  });
+
+  extractTextBtn?.addEventListener("click", async () => {
+    const file = photoInput?.files && photoInput.files[0];
+    if (!file) {
+      setOcrStatus("Choose an image first if you want OCR help.", "error");
       return;
     }
     await importRecipeFromPhoto(file);
+  });
+
+  useOcrIngredientsBtn?.addEventListener("click", () => {
+    const text = String(ocrText?.value || "").trim();
+    if (!text) {
+      setOcrStatus("There is no extracted text yet.", "error");
+      return;
+    }
+    ingredientsInput.value = text;
+    setOcrStatus("Extracted text copied into Ingredients. Edit it however you want.");
+  });
+
+  useOcrDirectionsBtn?.addEventListener("click", () => {
+    const text = String(ocrText?.value || "").trim();
+    if (!text) {
+      setOcrStatus("There is no extracted text yet.", "error");
+      return;
+    }
+    stepsInput.value = text;
+    setOcrStatus("Extracted text copied into Directions. Edit it however you want.");
+  });
+
+  clearOcrBtn?.addEventListener("click", () => {
+    if (ocrText) ocrText.value = "";
+    setOcrStatus("");
   });
 
   recipeForm?.addEventListener("submit", async (event) => {

@@ -143,11 +143,19 @@
           </div>
 
           <div class="field field-full">
-            <label for="photo">Take photo / upload card</label>
-            <input id="photo" name="photo" type="file" accept="image/*" capture="environment" />
-            <div class="hint">Upload a screenshot or snap a recipe card. OCR will try to prefill the form, then you can edit everything before saving.</div>
+            <label for="photo">Upload image (optional)</label>
+            <input id="photo" name="photo" type="file" accept="image/*" />
+            <div class="hint">Upload a screenshot, photo from your phone, or image file. Manual entry always works. OCR is optional and will place extracted text in a helper box instead of forcing it into your recipe fields.</div>
+            <div class="ocr-tools">
+              <button class="chip" id="extractTextBtn" type="button">Extract Text</button>
+              <button class="chip" id="useOcrIngredientsBtn" type="button">Use for Ingredients</button>
+              <button class="chip" id="useOcrDirectionsBtn" type="button">Use for Directions</button>
+              <button class="chip" id="clearOcrBtn" type="button">Clear OCR</button>
+            </div>
             <div class="ocr-status" id="ocrStatus" aria-live="polite"></div>
-            <img class="photo-preview hidden" id="photoPreview" alt="Recipe card preview" />
+            <img class="photo-preview hidden" id="photoPreview" alt="Recipe upload preview" />
+            <label for="ocrText" class="ocr-label">Extracted text</label>
+            <textarea id="ocrText" class="ocr-text" placeholder="If you upload an image, extracted text will appear here. You can also leave this empty and enter the recipe manually."></textarea>
           </div>
 
           <div class="field field-full">

@@ -389,8 +389,21 @@ button { cursor: pointer; }
   font-size: 0.92rem;
   color: var(--muted);
 }
-.ocr-status.busy { color: #7c5828; }
-.ocr-status.error { color: #9e2b2b; }
+.ocr-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ocr-label {
+  margin-top: 2px;
+}
+.ocr-text {
+  min-height: 150px;
+}
+.ocr-status.busy,
+.ocr-status.is-busy { color: #7c5828; }
+.ocr-status.error,
+.ocr-status.is-error { color: #9e2b2b; }
 .photo-preview {
   width: min(100%, 360px);
   border-radius: 18px;
