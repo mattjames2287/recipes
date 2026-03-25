@@ -3,7 +3,6 @@ const STARTER_DATA_PATHS = ["data/recipes.json", "data_recipes_tmp.json"];
 const CLOUD_ENDPOINT = ""; // Paste your Apps Script web app URL here
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80";
 const CATEGORY_OPTIONS = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"];
-const TAG_SUGGESTIONS = ["All", "Quick", "Family Favorite", "Holiday", "Crock Pot", "Dessert", "Dinner", "Breakfast"];
 
 const recipeCard = document.getElementById("recipeCard");
 const recipeImage = document.getElementById("recipeImage");
@@ -17,7 +16,6 @@ const recipeNotes = document.getElementById("recipeNotes");
 const recipeCount = document.getElementById("recipeCount");
 const counterText = document.getElementById("counterText");
 const categoryRow = document.getElementById("categoryRow");
-const tagRow = document.getElementById("tagRow");
 const recipeTagChips = document.getElementById("recipeTagChips");
 const cloudStatus = document.getElementById("cloudStatus");
 const searchInput = document.getElementById("searchInput");
@@ -29,6 +27,11 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const flipBtn = document.getElementById("flipBtn");
 const openFormBtn = document.getElementById("openFormBtn");
+const searchBtn = document.getElementById("searchBtn");
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const closeMenuBtn = document.getElementById("closeMenuBtn");
+const filterMenu = document.getElementById("filterMenu");
+const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 const closeFormBtn = document.getElementById("closeFormBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const recipeModal = document.getElementById("recipeModal");
@@ -50,7 +53,6 @@ const notesInput = document.getElementById("notes");
 let starterRecipes = [];
 let userRecipes = loadLocalRecipes();
 let activeCategory = "All";
-let activeTag = "All";
 let currentIndex = 0;
 let searchTerm = "";
 let ocrWorker = null;
@@ -158,8 +160,7 @@ function matchesSearch(recipe) {
 function filteredRecipes() {
   return allRecipes().filter((recipe) => {
     const categoryMatch = activeCategory === "All" || recipe.category === activeCategory;
-    const tagMatch = activeTag === "All" || (recipe.tags || []).includes(activeTag);
-    return categoryMatch && tagMatch && matchesSearch(recipe);
+    return categoryMatch && matchesSearch(recipe);
   });
 }
 
@@ -200,18 +201,12 @@ function renderCategories() {
     resetToFirstRecipe();
     renderCategories();
     renderRecipe();
+    if (isMobileView()) setMenuOpen(false);
   });
 }
 
 function renderTags() {
-  const dynamic = new Set(TAG_SUGGESTIONS);
-  allRecipes().forEach((recipe) => (recipe.tags || []).forEach((tag) => dynamic.add(tag)));
-  renderPills(tagRow, Array.from(dynamic), activeTag, (value) => {
-    activeTag = value;
-    resetToFirstRecipe();
-    renderTags();
-    renderRecipe();
-  });
+  return;
 }
 
 function renderRecipeTags(tags) {
@@ -241,6 +236,32 @@ function renderFormCategoryPills() {
   });
 }
 
+function applySearch() {
+  searchTerm = String(searchInput?.value || "").trim().toLowerCase();
+  resetToFirstRecipe();
+  renderRecipe();
+}
+
+function setMenuOpen(open) {
+  if (!filterMenu || !menuToggleBtn) return;
+  filterMenu.classList.toggle("hidden", !open);
+  menuToggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function toggleMenu() {
+  if (!filterMenu) return;
+  setMenuOpen(filterMenu.classList.contains("hidden"));
+}
+
+function clearFilters() {
+  activeCategory = "All";
+  searchTerm = "";
+  if (searchInput) searchInput.value = "";
+  resetToFirstRecipe();
+  renderCategories();
+  renderRecipe();
+}
+
 function renderRecipe() {
   const recipes = filteredRecipes();
   if (!recipes.length) {
@@ -250,7 +271,7 @@ function renderRecipe() {
     }
     if (recipeCategory) recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
     if (recipeTitle) recipeTitle.textContent = "No recipes match right now";
-    if (recipeDescription) recipeDescription.textContent = "Try clearing a filter, changing the tag, or adding a new recipe.";
+    if (recipeDescription) recipeDescription.textContent = "Try clearing a filter, changing your search, or adding a new recipe.";
     if (ingredientsList) ingredientsList.innerHTML = "";
     if (stepsList) stepsList.innerHTML = "";
     if (recipeTagChips) recipeTagChips.innerHTML = "";
@@ -291,6 +312,7 @@ function renderRecipe() {
 }
 
 function openModal() {
+  setMenuOpen(false);
   if (!recipeModal) return;
   recipeModal.classList.add("show");
   recipeModal.setAttribute("aria-hidden", "false");
@@ -373,7 +395,6 @@ async function refreshRecipeSources(options = {}) {
   }
 
   renderCategories();
-  renderTags();
 
   const recipes = filteredRecipes();
   if (preserveIndex && previousTitle) {
@@ -692,24 +713,28 @@ function bindEvents() {
   closeFormBtn?.addEventListener("click", closeModal);
   cancelBtn?.addEventListener("click", closeModal);
 
-  searchInput?.addEventListener("input", (event) => {
-    searchTerm = String(event.target.value || "").trim().toLowerCase();
-    resetToFirstRecipe();
-    renderRecipe();
-  });
+  searchBtn?.addEventListener("click", applySearch);
+  menuToggleBtn?.addEventListener("click", toggleMenu);
+  closeMenuBtn?.addEventListener("click", () => setMenuOpen(false));
+  clearFiltersBtn?.addEventListener("click", clearFilters);
 
   searchInput?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      searchTerm = String(searchInput.value || "").trim().toLowerCase();
-      resetToFirstRecipe();
-      renderRecipe();
+      applySearch();
       searchInput.blur();
     }
   });
 
   recipeModal?.addEventListener("click", (event) => {
     if (event.target === recipeModal) closeModal();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!filterMenu || !menuToggleBtn) return;
+    if (filterMenu.classList.contains("hidden")) return;
+    if (filterMenu.contains(event.target) || menuToggleBtn.contains(event.target)) return;
+    setMenuOpen(false);
   });
 
   window.addEventListener("keydown", (event) => {
@@ -759,14 +784,13 @@ function bindEvents() {
     try {
       await saveRecipe(newRecipe, imageData);
       activeCategory = "All";
-      activeTag = "All";
       searchTerm = "";
       if (searchInput) searchInput.value = "";
       resetToFirstRecipe();
       renderCategories();
-      renderTags();
       renderRecipe();
       closeModal();
+      setMenuOpen(false);
     } catch (error) {
       console.error(error);
       alert("Recipe save failed. Check your Apps Script URL if cloud sync is turned on.");
@@ -779,8 +803,8 @@ function bindEvents() {
 function init() {
   bindEvents();
   renderCategories();
-  renderTags();
   renderFormCategoryPills();
+  setMenuOpen(false);
   renderRecipe();
   syncFlipDisplay();
   refreshRecipeSources();

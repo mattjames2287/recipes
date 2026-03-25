@@ -10,17 +10,35 @@
   <div class="scene">
     <header class="toolbar">
       <div class="brand">
-        <h1>Bari Family Cook Book</h1>
-        <p class="brand-sub">Shared recipe book with cloud-ready saving, tags, search, and camera upload prep.</p>
+        <h1>Bari Family Cookbook</h1>
       </div>
 
-      <div class="toolbar-right">
-        <div class="top-actions">
-          <input class="search-input" id="searchInput" type="search" placeholder="Search chicken, dessert, banana..." />
-          <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
+      <div class="toolbar-right compact-toolbar">
+        <div class="search-shell">
+          <input class="search-input" id="searchInput" type="search" placeholder="Search recipes..." />
+          <button class="chip lookup-btn" id="searchBtn" type="button">Look Up</button>
+          <button class="chip menu-btn" id="menuToggleBtn" type="button" aria-expanded="false" aria-controls="filterMenu">☰</button>
         </div>
-        <div class="chip-row" id="categoryRow"></div>
-        <div class="chip-row tag-row" id="tagRow"></div>
+
+        <div class="filter-menu hidden" id="filterMenu">
+          <div class="filter-menu-head">
+            <div>
+              <div class="eyebrow">Browse</div>
+              <h2>Find a recipe</h2>
+            </div>
+            <button class="icon-close" id="closeMenuBtn" type="button" aria-label="Close menu">×</button>
+          </div>
+
+          <div class="filter-menu-section">
+            <div class="menu-label">Categories</div>
+            <div class="chip-row category-menu" id="categoryRow"></div>
+          </div>
+
+          <div class="filter-menu-actions">
+            <button class="chip" id="clearFiltersBtn" type="button">Clear Filters</button>
+            <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
+          </div>
+        </div>
       </div>
     </header>
 
