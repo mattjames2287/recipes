@@ -19,6 +19,9 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const flipBtn = document.getElementById("flipBtn");
 const openFormBtn = document.getElementById("openFormBtn");
+const editRecipeBtn = document.getElementById("editRecipeBtn");
+const deleteRecipeBtn = document.getElementById("deleteRecipeBtn");
+const viewAllBtn = document.getElementById("viewAllBtn");
 const recipeModal = document.getElementById("recipeModal");
 const closeFormBtn = document.getElementById("closeFormBtn");
 const cancelBtn = document.getElementById("cancelBtn");
@@ -27,12 +30,16 @@ const formCategoryPills = document.getElementById("formCategoryPills");
 const categoryInput = document.getElementById("category");
 const photoInput = document.getElementById("photo");
 const photoPreview = document.getElementById("photoPreview");
+const indexModal = document.getElementById("indexModal");
+const closeIndexBtn = document.getElementById("closeIndexBtn");
+const recipeIndexList = document.getElementById("recipeIndexList");
 
 let starterRecipes = [];
 let userRecipes = loadLocalRecipes();
 let currentIndex = 0;
 let activeCategory = "All";
 let searchTerm = "";
+let editingRecipeId = null;
 
 function isMobileView() {
   return window.matchMedia("(max-width: 900px)").matches;
@@ -42,19 +49,20 @@ function cloudEnabled() {
   return Boolean(String(CLOUD_ENDPOINT || "").trim());
 }
 
+function recipeIdOf(recipe) {
+  return String(recipe?.id || "").trim() || `${String(recipe?.title || "untitled").trim().toLowerCase()}__${String(recipe?.createdAt || "").trim()}`;
+}
+
 function ensureArray(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item || "").trim()).filter(Boolean);
-  }
-  if (typeof value === "string") {
-    return value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
-  }
+  if (Array.isArray(value)) return value.map((item) => String(item || "").trim()).filter(Boolean);
+  if (typeof value === "string") return value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   return [];
 }
 
 function normalizeRecipe(recipe) {
   const category = String(recipe?.category || "Dinner").trim();
   return {
+    id: String(recipe?.id || recipe?.createdAt || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`).trim(),
     title: String(recipe?.title || "Untitled Recipe").trim(),
     category: CATEGORY_OPTIONS.includes(category) ? category : "Dinner",
     image: String(recipe?.image || "").trim(),
@@ -62,7 +70,7 @@ function normalizeRecipe(recipe) {
     ingredients: ensureArray(recipe?.ingredients),
     steps: ensureArray(recipe?.steps),
     notes: String(recipe?.notes || "").trim(),
-    createdAt: String(recipe?.createdAt || "").trim()
+    createdAt: String(recipe?.createdAt || new Date().toISOString()).trim()
   };
 }
 
@@ -85,7 +93,7 @@ function saveLocalRecipes() {
 function allRecipes() {
   const seen = new Set();
   return [...userRecipes, ...starterRecipes].filter((recipe) => {
-    const key = `${recipe.title}__${recipe.category}`.toLowerCase();
+    const key = recipeIdOf(recipe);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -101,9 +109,7 @@ function matchesSearch(recipe) {
     ...(recipe.ingredients || []),
     ...(recipe.steps || []),
     recipe.notes
-  ]
-    .join(" ")
-    .toLowerCase();
+  ].join(" ").toLowerCase();
   return haystack.includes(searchTerm);
 }
 
@@ -112,6 +118,14 @@ function filteredRecipes() {
     const categoryMatch = activeCategory === "All" || recipe.category === activeCategory;
     return categoryMatch && matchesSearch(recipe);
   });
+}
+
+function getCurrentRecipe() {
+  const recipes = filteredRecipes();
+  if (!recipes.length) return null;
+  if (currentIndex >= recipes.length) currentIndex = 0;
+  if (currentIndex < 0) currentIndex = recipes.length - 1;
+  return recipes[currentIndex];
 }
 
 function syncFlipDisplay() {
@@ -146,6 +160,13 @@ function renderList(items, target) {
   target.appendChild(fragment);
 }
 
+function updateActionButtons(currentRecipe) {
+  const localIds = new Set(userRecipes.map(recipeIdOf));
+  const editable = Boolean(currentRecipe && localIds.has(recipeIdOf(currentRecipe)) && !cloudEnabled());
+  if (editRecipeBtn) editRecipeBtn.disabled = !editable;
+  if (deleteRecipeBtn) deleteRecipeBtn.disabled = !editable;
+}
+
 function renderRecipe() {
   const recipes = filteredRecipes();
 
@@ -154,21 +175,19 @@ function renderRecipe() {
     recipeImage.alt = "No recipe available";
     recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
     recipeTitle.textContent = "No recipes match right now";
-    recipeDescription.textContent = "Try a different search, choose another category, or add a new recipe.";
+    recipeDescription.textContent = "Try another search, choose another category, or add a new recipe.";
     renderList([], ingredientsList);
     renderList([], stepsList);
     recipeCount.textContent = "0 / 0";
     counterText.textContent = "No recipes found";
+    updateActionButtons(null);
     return;
   }
 
-  if (currentIndex >= recipes.length) currentIndex = 0;
-  if (currentIndex < 0) currentIndex = recipes.length - 1;
-
+  const recipe = getCurrentRecipe();
   prevBtn.disabled = recipes.length <= 1;
   nextBtn.disabled = recipes.length <= 1;
 
-  const recipe = recipes[currentIndex];
   recipeImage.src = recipe.image || FALLBACK_IMAGE;
   recipeImage.alt = recipe.title || "Recipe image";
   recipeCategory.textContent = recipe.category || "Recipe";
@@ -178,6 +197,7 @@ function renderRecipe() {
   renderList(recipe.steps || [], stepsList);
   recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
   counterText.textContent = `${recipes.length} ${recipes.length === 1 ? "recipe" : "recipes"} shown`;
+  updateActionButtons(recipe);
 }
 
 function renderCategoryFilters() {
@@ -220,14 +240,60 @@ function openModal() {
   renderFormCategoryPills();
 }
 
-function closeModal() {
-  recipeModal.classList.remove("show");
-  recipeModal.setAttribute("aria-hidden", "true");
+function resetFormState() {
   recipeForm.reset();
   categoryInput.value = "Dinner";
   renderFormCategoryPills();
   photoPreview.classList.add("hidden");
   photoPreview.removeAttribute("src");
+  editingRecipeId = null;
+  recipeModal.querySelector(".modal-head h2").textContent = "Add a recipe";
+}
+
+function closeModal() {
+  recipeModal.classList.remove("show");
+  recipeModal.setAttribute("aria-hidden", "true");
+  resetFormState();
+}
+
+function openIndexModal() {
+  renderRecipeIndex();
+  indexModal.classList.add("show");
+  indexModal.setAttribute("aria-hidden", "false");
+}
+
+function closeIndexModal() {
+  indexModal.classList.remove("show");
+  indexModal.setAttribute("aria-hidden", "true");
+}
+
+function renderRecipeIndex() {
+  recipeIndexList.innerHTML = "";
+  const recipes = [...allRecipes()].sort((a, b) => a.title.localeCompare(b.title));
+  const current = getCurrentRecipe();
+  const currentId = current ? recipeIdOf(current) : "";
+  const fragment = document.createDocumentFragment();
+
+  recipes.forEach((recipe) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `index-item${recipeIdOf(recipe) === currentId ? " active" : ""}`;
+    button.innerHTML = `<span class="index-title">${recipe.title}</span><span class="index-meta">${recipe.category}</span>`;
+    button.addEventListener("click", () => {
+      activeCategory = "All";
+      searchTerm = "";
+      searchInput.value = "";
+      renderCategoryFilters();
+      const visible = filteredRecipes();
+      currentIndex = Math.max(0, visible.findIndex((item) => recipeIdOf(item) === recipeIdOf(recipe)));
+      resetFlip();
+      renderRecipe();
+      closeIndexModal();
+    });
+    fragment.appendChild(button);
+  });
+
+  recipeIndexList.appendChild(fragment);
 }
 
 function parseLines(value) {
@@ -293,8 +359,51 @@ async function saveRecipe(recipe, imageData) {
     return;
   }
 
-  userRecipes.unshift(recipe);
+  if (editingRecipeId) {
+    const idx = userRecipes.findIndex((item) => recipeIdOf(item) === editingRecipeId);
+    if (idx !== -1) {
+      userRecipes[idx] = recipe;
+    } else {
+      userRecipes.unshift(recipe);
+    }
+  } else {
+    userRecipes.unshift(recipe);
+  }
   saveLocalRecipes();
+}
+
+function populateFormForEdit(recipe) {
+  recipeForm.title.value = recipe.title;
+  recipeForm.description.value = recipe.description;
+  recipeForm.image.value = recipe.image;
+  recipeForm.ingredients.value = (recipe.ingredients || []).join("\n");
+  recipeForm.steps.value = (recipe.steps || []).join("\n");
+  recipeForm.notes.value = recipe.notes;
+  categoryInput.value = recipe.category;
+  renderFormCategoryPills();
+  if (recipe.image) {
+    photoPreview.src = recipe.image;
+    photoPreview.classList.remove("hidden");
+  }
+  editingRecipeId = recipeIdOf(recipe);
+  recipeModal.querySelector(".modal-head h2").textContent = "Edit recipe";
+  openModal();
+}
+
+function handleDelete() {
+  const current = getCurrentRecipe();
+  if (!current) return;
+  if (cloudEnabled()) {
+    alert("Edit and delete are local-only right now. Keep cloud sync off if you want in-browser editing.");
+    return;
+  }
+  if (!confirm(`Delete \"${current.title}\"?`)) return;
+  userRecipes = userRecipes.filter((item) => recipeIdOf(item) !== recipeIdOf(current));
+  saveLocalRecipes();
+  currentIndex = 0;
+  resetFlip();
+  renderRecipe();
+  renderRecipeIndex();
 }
 
 async function handleSubmit(event) {
@@ -303,16 +412,18 @@ async function handleSubmit(event) {
   const formData = new FormData(recipeForm);
   const file = photoInput.files?.[0] || null;
   const imageData = file ? await fileToDataUrl(file) : "";
+  const existing = editingRecipeId ? userRecipes.find((item) => recipeIdOf(item) === editingRecipeId) : null;
 
   const newRecipe = normalizeRecipe({
+    id: editingRecipeId || existing?.id || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     title: formData.get("title"),
     category: formData.get("category"),
     description: formData.get("description"),
-    image: formData.get("image") || imageData,
+    image: imageData || formData.get("image") || existing?.image || "",
     ingredients: parseLines(formData.get("ingredients")),
     steps: parseLines(formData.get("steps")),
     notes: formData.get("notes"),
-    createdAt: new Date().toISOString()
+    createdAt: existing?.createdAt || new Date().toISOString()
   });
 
   if (!newRecipe.title || !newRecipe.ingredients.length || !newRecipe.steps.length) return;
@@ -350,11 +461,29 @@ function bindEvents() {
     syncFlipDisplay();
   });
 
-  openFormBtn.addEventListener("click", openModal);
+  openFormBtn.addEventListener("click", () => {
+    resetFormState();
+    openModal();
+  });
+  editRecipeBtn.addEventListener("click", () => {
+    const current = getCurrentRecipe();
+    if (!current) return;
+    if (cloudEnabled()) {
+      alert("Edit is local-only right now. Keep cloud sync off if you want in-browser editing.");
+      return;
+    }
+    populateFormForEdit(current);
+  });
+  deleteRecipeBtn.addEventListener("click", handleDelete);
+  viewAllBtn.addEventListener("click", openIndexModal);
   closeFormBtn.addEventListener("click", closeModal);
   cancelBtn.addEventListener("click", closeModal);
+  closeIndexBtn.addEventListener("click", closeIndexModal);
   recipeModal.addEventListener("click", (event) => {
     if (event.target === recipeModal) closeModal();
+  });
+  indexModal.addEventListener("click", (event) => {
+    if (event.target === indexModal) closeIndexModal();
   });
 
   searchInput.addEventListener("input", () => {
@@ -380,9 +509,10 @@ function bindEvents() {
 
   window.addEventListener("resize", syncFlipDisplay);
   window.addEventListener("keydown", (event) => {
-    const modalOpen = recipeModal.classList.contains("show");
+    const modalOpen = recipeModal.classList.contains("show") || indexModal.classList.contains("show");
     if (event.key === "Escape" && modalOpen) {
       closeModal();
+      closeIndexModal();
       return;
     }
     if (modalOpen) return;

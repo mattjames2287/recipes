@@ -27,13 +27,15 @@
               </article>
 
               <article class="recipe-face recipe-back">
-                <div>
+                <div class="back-section">
                   <div class="eyebrow">Ingredients</div>
                   <h3 class="section-title">What you need</h3>
                   <ul class="ingredients-list" id="ingredientsList"></ul>
                 </div>
 
-                <div>
+                <div class="back-divider"></div>
+
+                <div class="back-section">
                   <div class="eyebrow">Directions</div>
                   <h3 class="section-title">How to make it</h3>
                   <ol class="steps-list" id="stepsList"></ol>
@@ -47,10 +49,15 @@
           <div class="side-panel">
             <div class="browse-panel">
               <div>
-                <div class="eyebrow eyebrow-large">Bari Family Cookbook</div>
+                <h1 class="book-heading">Bari Family Cookbook</h1>
                 <div class="right-tools">
                   <input class="search-input right-search" id="searchInput" type="search" placeholder="Search recipes..." />
                   <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
+                  <div class="right-action-row">
+                    <button class="soft-btn" id="editRecipeBtn" type="button">Edit</button>
+                    <button class="soft-btn danger-btn" id="deleteRecipeBtn" type="button">Delete</button>
+                    <button class="soft-btn" id="viewAllBtn" type="button">View All</button>
+                  </div>
                 </div>
               </div>
 
@@ -133,6 +140,19 @@
           <button class="wood-btn" type="submit">Save Recipe</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="modal" id="indexModal" aria-hidden="true">
+    <div class="modal-card modal-card-narrow">
+      <div class="modal-head">
+        <div>
+          <h2>Recipe Index</h2>
+          <p>All recipes, listed A to Z.</p>
+        </div>
+        <button class="icon-close" id="closeIndexBtn" type="button" aria-label="Close index">×</button>
+      </div>
+      <div class="recipe-index-list" id="recipeIndexList"></div>
     </div>
   </div>
 
