@@ -129,12 +129,43 @@ function isUserRecipe(recipe) {
 }
 
 function allRecipes() {
-  const byId = new Map();
+  const byTitle = new Map();
+
   [...starterRecipes, ...userRecipes].forEach((recipe) => {
     const normalized = normalizeRecipe(recipe);
-    byId.set(recipeIdOf(normalized), normalized);
+    const titleKey = String(normalized.title || "").trim().toLowerCase();
+    const hasImage = Boolean(String(normalized.image || "").trim());
+
+    if (!titleKey) {
+      byTitle.set(recipeIdOf(normalized), normalized);
+      return;
+    }
+
+    const existing = byTitle.get(titleKey);
+    if (!existing) {
+      byTitle.set(titleKey, normalized);
+      return;
+    }
+
+    const existingHasImage = Boolean(String(existing.image || "").trim());
+
+    if (hasImage && !existingHasImage) {
+      byTitle.set(titleKey, normalized);
+      return;
+    }
+
+    if (hasImage === existingHasImage) {
+      const existingTime = Date.parse(existing.createdAt || "") || 0;
+      const newTime = Date.parse(normalized.createdAt || "") || 0;
+      if (newTime >= existingTime) {
+        byTitle.set(titleKey, normalized);
+      }
+    }
   });
-  return [...byId.values()];
+
+  return [...byTitle.values()].sort((a, b) => {
+    return String(a.title || "").localeCompare(String(b.title || ""));
+  });
 }
 
 function matchesSearch(recipe) {
