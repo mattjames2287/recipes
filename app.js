@@ -165,6 +165,9 @@ function renderRecipe() {
   if (currentIndex >= recipes.length) currentIndex = 0;
   if (currentIndex < 0) currentIndex = recipes.length - 1;
 
+  prevBtn.disabled = recipes.length <= 1;
+  nextBtn.disabled = recipes.length <= 1;
+
   const recipe = recipes[currentIndex];
   recipeImage.src = recipe.image || FALLBACK_IMAGE;
   recipeImage.alt = recipe.title || "Recipe image";
@@ -174,7 +177,7 @@ function renderRecipe() {
   renderList(recipe.ingredients || [], ingredientsList);
   renderList(recipe.steps || [], stepsList);
   recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
-  counterText.textContent = `${recipes.length} recipe${recipes.length === 1 ? "" : "s"} shown`;
+  counterText.textContent = `${recipes.length} ${recipes.length === 1 ? "recipe" : "recipes"} shown`;
 }
 
 function renderCategoryFilters() {
