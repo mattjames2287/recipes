@@ -51,12 +51,16 @@
               <div>
                 <h1 class="book-heading">Bari Family Cookbook</h1>
                 <div class="right-tools">
-                  <input class="search-input right-search" id="searchInput" type="search" placeholder="Search recipes..." />
+                  <div class="search-row">
+                    <input class="search-input right-search" id="searchInput" type="search" placeholder="Search recipes..." />
+                    <button class="soft-btn clear-btn hidden" id="clearSearchBtn" type="button">Clear</button>
+                  </div>
                   <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
                   <div class="right-action-row">
+                    <button class="soft-btn" id="favoriteBtn" type="button">☆ Favorite</button>
+                    <button class="soft-btn" id="viewAllBtn" type="button">View All</button>
                     <button class="soft-btn" id="editRecipeBtn" type="button">Edit</button>
                     <button class="soft-btn danger-btn" id="deleteRecipeBtn" type="button">Delete</button>
-                    <button class="soft-btn" id="viewAllBtn" type="button">View All</button>
                   </div>
                 </div>
               </div>
@@ -157,5 +161,6 @@
   </div>
 
   <script src="app.js"></script>
+  <div class="toast" id="toast"></div>
 </body>
 </html>

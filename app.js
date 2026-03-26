@@ -3,6 +3,7 @@ const STARTER_DATA_PATH = "data/recipes.json";
 const CLOUD_ENDPOINT = ""; // Paste your Apps Script web app URL here
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80";
 const CATEGORY_OPTIONS = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"];
+const FAVORITES_CATEGORY = "Favorites";
 
 const recipeCard = document.getElementById("recipeCard");
 const recipeImage = document.getElementById("recipeImage");
@@ -15,6 +16,7 @@ const ingredientsList = document.getElementById("ingredientsList");
 const stepsList = document.getElementById("stepsList");
 const browseCategoryList = document.getElementById("browseCategoryList");
 const searchInput = document.getElementById("searchInput");
+const clearSearchBtn = document.getElementById("clearSearchBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const flipBtn = document.getElementById("flipBtn");
@@ -22,6 +24,7 @@ const openFormBtn = document.getElementById("openFormBtn");
 const editRecipeBtn = document.getElementById("editRecipeBtn");
 const deleteRecipeBtn = document.getElementById("deleteRecipeBtn");
 const viewAllBtn = document.getElementById("viewAllBtn");
+const favoriteBtn = document.getElementById("favoriteBtn");
 const recipeModal = document.getElementById("recipeModal");
 const closeFormBtn = document.getElementById("closeFormBtn");
 const cancelBtn = document.getElementById("cancelBtn");
@@ -33,6 +36,7 @@ const photoPreview = document.getElementById("photoPreview");
 const indexModal = document.getElementById("indexModal");
 const closeIndexBtn = document.getElementById("closeIndexBtn");
 const recipeIndexList = document.getElementById("recipeIndexList");
+const toast = document.getElementById("toast");
 
 let starterRecipes = [];
 let userRecipes = loadLocalRecipes();
@@ -70,6 +74,7 @@ function normalizeRecipe(recipe) {
     ingredients: ensureArray(recipe?.ingredients),
     steps: ensureArray(recipe?.steps),
     notes: String(recipe?.notes || "").trim(),
+    favorite: Boolean(recipe?.favorite),
     createdAt: String(recipe?.createdAt || new Date().toISOString()).trim()
   };
 }
@@ -115,8 +120,9 @@ function matchesSearch(recipe) {
 
 function filteredRecipes() {
   return allRecipes().filter((recipe) => {
-    const categoryMatch = activeCategory === "All" || recipe.category === activeCategory;
-    return categoryMatch && matchesSearch(recipe);
+    const favoriteMatch = activeCategory !== FAVORITES_CATEGORY || recipe.favorite;
+    const categoryMatch = activeCategory === "All" || activeCategory === FAVORITES_CATEGORY || recipe.category === activeCategory;
+    return favoriteMatch && categoryMatch && matchesSearch(recipe);
   });
 }
 
@@ -160,26 +166,64 @@ function renderList(items, target) {
   target.appendChild(fragment);
 }
 
-function updateActionButtons(currentRecipe) {
+
+function showToast(message) {
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function updateSearchUi() {
+  if (!clearSearchBtn) return;
+  const active = Boolean(searchTerm || activeCategory !== "All");
+  clearSearchBtn.classList.toggle("hidden", !active);
+}
+
+function clearFilters() {
+  activeCategory = "All";
+  searchTerm = "";
+  currentIndex = 0;
+  if (searchInput) searchInput.value = "";
+  resetFlip();
+  renderCategoryFilters();
+  updateSearchUi();
+  renderRecipe();
+}
+
+function isEditableRecipe(recipe) {
   const localIds = new Set(userRecipes.map(recipeIdOf));
-  const editable = Boolean(currentRecipe && localIds.has(recipeIdOf(currentRecipe)) && !cloudEnabled());
+  return Boolean(recipe && (cloudEnabled() || localIds.has(recipeIdOf(recipe))));
+}
+
+function updateActionButtons(currentRecipe) {
+  const editable = isEditableRecipe(currentRecipe);
   if (editRecipeBtn) editRecipeBtn.disabled = !editable;
   if (deleteRecipeBtn) deleteRecipeBtn.disabled = !editable;
+  if (favoriteBtn) {
+    favoriteBtn.disabled = !editable;
+    favoriteBtn.textContent = currentRecipe?.favorite ? "★ Favorite" : "☆ Favorite";
+    favoriteBtn.classList.toggle("active-favorite", Boolean(currentRecipe?.favorite));
+  }
 }
 
 function renderRecipe() {
   const recipes = filteredRecipes();
+  updateSearchUi();
 
   if (!recipes.length) {
     recipeImage.src = FALLBACK_IMAGE;
     recipeImage.alt = "No recipe available";
     recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
     recipeTitle.textContent = "No recipes match right now";
-    recipeDescription.textContent = "Try another search, choose another category, or add a new recipe.";
+    recipeDescription.textContent = "Try another search or category, or clear filters to see everything again.";
     renderList([], ingredientsList);
     renderList([], stepsList);
     recipeCount.textContent = "0 / 0";
     counterText.textContent = "No recipes found";
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
     updateActionButtons(null);
     return;
   }
@@ -203,7 +247,7 @@ function renderRecipe() {
 function renderCategoryFilters() {
   if (!browseCategoryList) return;
   browseCategoryList.innerHTML = "";
-  ["All", ...CATEGORY_OPTIONS].forEach((category) => {
+  ["All", FAVORITES_CATEGORY, ...CATEGORY_OPTIONS].forEach((category) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `category-link${category === activeCategory ? " active" : ""}`;
@@ -213,6 +257,7 @@ function renderCategoryFilters() {
       currentIndex = 0;
       resetFlip();
       renderCategoryFilters();
+      updateSearchUi();
       renderRecipe();
     });
     browseCategoryList.appendChild(button);
@@ -275,22 +320,67 @@ function renderRecipeIndex() {
   const fragment = document.createDocumentFragment();
 
   recipes.forEach((recipe) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `index-item${recipeIdOf(recipe) === currentId ? " active" : ""}`;
-    button.innerHTML = `<span class="index-title">${recipe.title}</span><span class="index-meta">${recipe.category}</span>`;
-    button.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.className = `index-item${recipeIdOf(recipe) === currentId ? " active" : ""}`;
+
+    const main = document.createElement("button");
+    main.type = "button";
+    main.className = "index-main";
+    main.innerHTML = `<span class="index-title">${recipe.favorite ? "★ " : ""}${recipe.title}</span><span class="index-meta">${recipe.category}</span>`;
+    main.addEventListener("click", () => {
       activeCategory = "All";
       searchTerm = "";
       searchInput.value = "";
       renderCategoryFilters();
+      updateSearchUi();
       const visible = filteredRecipes();
       currentIndex = Math.max(0, visible.findIndex((item) => recipeIdOf(item) === recipeIdOf(recipe)));
       resetFlip();
       renderRecipe();
       closeIndexModal();
     });
-    fragment.appendChild(button);
+
+    const actions = document.createElement("div");
+    actions.className = "index-actions";
+
+    const fav = document.createElement("button");
+    fav.type = "button";
+    fav.className = `index-inline-btn${recipe.favorite ? " active-favorite" : ""}`;
+    fav.textContent = recipe.favorite ? "★" : "☆";
+    fav.title = recipe.favorite ? "Remove favorite" : "Add favorite";
+    fav.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleFavorite(recipe, true);
+    });
+    actions.appendChild(fav);
+
+    const editable = isEditableRecipe(recipe);
+    if (editable) {
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "index-inline-btn";
+      edit.textContent = "Edit";
+      edit.addEventListener("click", (event) => {
+        event.stopPropagation();
+        closeIndexModal();
+        populateFormForEdit(recipe);
+      });
+      actions.appendChild(edit);
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "index-inline-btn danger-text";
+      del.textContent = "Delete";
+      del.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        await deleteRecipeById(recipeIdOf(recipe), recipe.title);
+      });
+      actions.appendChild(del);
+    }
+
+    row.appendChild(main);
+    row.appendChild(actions);
+    fragment.appendChild(row);
   });
 
   recipeIndexList.appendChild(fragment);
@@ -343,7 +433,7 @@ async function loadStarterRecipes() {
 
 async function saveRecipe(recipe, imageData) {
   if (cloudEnabled()) {
-    const payload = { action: "add", recipe };
+    const payload = { action: editingRecipeId ? "update" : "add", recipe };
     if (imageData) payload.imageDataUrl = imageData;
 
     const response = await fetch(CLOUD_ENDPOINT, {
@@ -390,20 +480,71 @@ function populateFormForEdit(recipe) {
   openModal();
 }
 
-function handleDelete() {
-  const current = getCurrentRecipe();
-  if (!current) return;
+async function deleteRecipeById(id, title = "this recipe") {
+  if (!confirm(`Delete "${title}"?`)) return;
+
   if (cloudEnabled()) {
-    alert("Edit and delete are local-only right now. Keep cloud sync off if you want in-browser editing.");
-    return;
+    const response = await fetch(CLOUD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "delete", id })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    if (!data.ok) throw new Error(data.error || "Cloud delete failed");
+    await loadStarterRecipes();
+  } else {
+    userRecipes = userRecipes.filter((item) => recipeIdOf(item) !== id);
+    saveLocalRecipes();
   }
-  if (!confirm(`Delete \"${current.title}\"?`)) return;
-  userRecipes = userRecipes.filter((item) => recipeIdOf(item) !== recipeIdOf(current));
-  saveLocalRecipes();
+
   currentIndex = 0;
   resetFlip();
+  renderCategoryFilters();
   renderRecipe();
   renderRecipeIndex();
+  showToast("Recipe deleted");
+}
+
+async function handleDelete() {
+  const current = getCurrentRecipe();
+  if (!current) return;
+  try {
+    await deleteRecipeById(recipeIdOf(current), current.title);
+  } catch (error) {
+    console.error(error);
+    alert("Delete failed.");
+  }
+}
+
+async function toggleFavorite(recipe = getCurrentRecipe(), shouldRerender = true) {
+  if (!recipe) return;
+  const updated = normalizeRecipe({ ...recipe, favorite: !recipe.favorite });
+
+  if (cloudEnabled()) {
+    const response = await fetch(CLOUD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "update", recipe: updated })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    if (!data.ok) throw new Error(data.error || "Favorite update failed");
+    await loadStarterRecipes();
+  } else {
+    const idx = userRecipes.findIndex((item) => recipeIdOf(item) === recipeIdOf(recipe));
+    if (idx !== -1) {
+      userRecipes[idx] = updated;
+      saveLocalRecipes();
+    }
+  }
+
+  if (shouldRerender) {
+    renderCategoryFilters();
+    renderRecipe();
+    renderRecipeIndex();
+    showToast(updated.favorite ? "Added to favorites" : "Removed from favorites");
+  }
 }
 
 async function handleSubmit(event) {
@@ -423,11 +564,13 @@ async function handleSubmit(event) {
     ingredients: parseLines(formData.get("ingredients")),
     steps: parseLines(formData.get("steps")),
     notes: formData.get("notes"),
+    favorite: existing?.favorite || false,
     createdAt: existing?.createdAt || new Date().toISOString()
   });
 
   if (!newRecipe.title || !newRecipe.ingredients.length || !newRecipe.steps.length) return;
 
+  const wasEditing = Boolean(editingRecipeId);
   try {
     await saveRecipe(newRecipe, imageData);
     activeCategory = "All";
@@ -435,8 +578,10 @@ async function handleSubmit(event) {
     searchInput.value = "";
     currentIndex = 0;
     renderCategoryFilters();
+    updateSearchUi();
     renderRecipe();
     closeModal();
+    showToast(wasEditing ? "Recipe updated" : "Recipe added");
   } catch (error) {
     console.error(error);
     alert("Recipe save failed. Check your Apps Script URL if cloud sync is turned on.");
@@ -468,13 +613,17 @@ function bindEvents() {
   editRecipeBtn.addEventListener("click", () => {
     const current = getCurrentRecipe();
     if (!current) return;
-    if (cloudEnabled()) {
-      alert("Edit is local-only right now. Keep cloud sync off if you want in-browser editing.");
-      return;
-    }
     populateFormForEdit(current);
   });
   deleteRecipeBtn.addEventListener("click", handleDelete);
+  favoriteBtn.addEventListener("click", async () => {
+    try {
+      await toggleFavorite();
+    } catch (error) {
+      console.error(error);
+      alert("Favorite update failed.");
+    }
+  });
   viewAllBtn.addEventListener("click", openIndexModal);
   closeFormBtn.addEventListener("click", closeModal);
   cancelBtn.addEventListener("click", closeModal);
@@ -490,8 +639,11 @@ function bindEvents() {
     searchTerm = searchInput.value.trim().toLowerCase();
     currentIndex = 0;
     resetFlip();
+    updateSearchUi();
     renderRecipe();
   });
+
+  clearSearchBtn.addEventListener("click", clearFilters);
 
   photoInput.addEventListener("change", async () => {
     const file = photoInput.files?.[0] || null;
@@ -528,6 +680,7 @@ async function init() {
   syncFlipDisplay();
   await loadStarterRecipes();
   renderCategoryFilters();
+  updateSearchUi();
   renderRecipe();
 }
 
