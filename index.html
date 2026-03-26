@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bari Family Cook Book</title>
+  <title>Bari Family Cookbook</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,31 +13,9 @@
         <h1>Bari Family Cookbook</h1>
       </div>
 
-      <div class="toolbar-right compact-toolbar">
-        <div class="search-shell">
-          <input class="search-input" id="searchInput" type="search" placeholder="Search recipes..." />
-          <button class="chip menu-btn" id="menuToggleBtn" type="button" aria-expanded="false" aria-controls="filterMenu">☰</button>
-        </div>
-
-        <div class="filter-menu hidden" id="filterMenu">
-          <div class="filter-menu-head">
-            <div>
-              <div class="eyebrow">Browse</div>
-              <h2>Find a recipe</h2>
-            </div>
-            <button class="icon-close" id="closeMenuBtn" type="button" aria-label="Close menu">×</button>
-          </div>
-
-          <div class="filter-menu-section">
-            <div class="menu-label">Categories</div>
-            <div class="chip-row category-menu" id="categoryRow"></div>
-          </div>
-
-          <div class="filter-menu-actions">
-            <button class="chip" id="clearFiltersBtn" type="button">Clear Filters</button>
-            <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
-          </div>
-        </div>
+      <div class="toolbar-right">
+        <input class="search-input" id="searchInput" type="search" placeholder="Search recipes..." />
+        <button class="wood-btn" id="openFormBtn" type="button">+ Add Recipe</button>
       </div>
     </header>
 
@@ -50,7 +28,7 @@
                 <img class="cover-image" id="recipeImage" alt="Recipe image" />
                 <div>
                   <div class="eyebrow" id="recipeCategory">Recipe</div>
-                  <h2 class="recipe-title" id="recipeTitle">Loading recipe…</h2>
+                  <h2 class="recipe-title" id="recipeTitle">Loading recipe...</h2>
                 </div>
                 <p class="recipe-desc" id="recipeDescription">Recipe details will appear here.</p>
                 <div class="meta-line" id="recipeTagChips"></div>
@@ -79,25 +57,17 @@
 
         <section class="page page-right">
           <div class="side-panel">
-            <div class="browse-box">
-              <div class="eyebrow">Find a Recipe</div>
-              <h3 class="section-title">Browse</h3>
-
-              <div class="browse-section">
-                <div class="browse-label">Popular tags</div>
+            <div class="browse-panel">
+              <div>
+                <div class="eyebrow eyebrow-large">Find a Recipe</div>
+                <h3 class="browse-title">Browse by Tag</h3>
                 <div class="chip-row browse-tags" id="browseTagRow"></div>
               </div>
 
-              <div class="browse-section">
-                <div class="browse-label">Categories</div>
+              <div>
+                <h3 class="browse-title browse-title-spaced">Browse by Category</h3>
                 <div class="browse-category-list" id="browseCategoryList"></div>
               </div>
-            </div>
-
-            <div class="notes-box hidden" id="notesBox">
-              <div class="eyebrow">Recipe Notes</div>
-              <h3 class="section-title">Notes</h3>
-              <p id="recipeNotes"></p>
             </div>
 
             <div class="mini-controls">
@@ -153,7 +123,7 @@
           <div class="field field-full">
             <label for="photo">Upload image (optional)</label>
             <input id="photo" name="photo" type="file" accept="image/*" />
-            <div class="hint">Upload a screenshot, photo from your phone, or any image file if you want a recipe photo. Type the recipe details in manually for the most reliable results.</div>
+            <div class="hint">Upload a screenshot, photo from your phone, or any image file if you want a recipe photo.</div>
             <img class="photo-preview hidden" id="photoPreview" alt="Recipe upload preview" />
           </div>
 
