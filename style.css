@@ -733,3 +733,35 @@ button { cursor: pointer; }
     flex-wrap: wrap;
   }
 }
+
+
+/* Two-column back layout */
+.recipe-back {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px 24px;
+  align-items: start;
+}
+
+.recipe-back .back-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredients-list,
+.steps-list {
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+.back-divider {
+  display: none;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 768px) {
+  .recipe-back {
+    grid-template-columns: 1fr;
+  }
+}
