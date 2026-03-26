@@ -9,12 +9,10 @@ const recipeImage = document.getElementById("recipeImage");
 const recipeCategory = document.getElementById("recipeCategory");
 const recipeTitle = document.getElementById("recipeTitle");
 const recipeDescription = document.getElementById("recipeDescription");
-const recipeTagChips = document.getElementById("recipeTagChips");
 const recipeCount = document.getElementById("recipeCount");
 const counterText = document.getElementById("counterText");
 const ingredientsList = document.getElementById("ingredientsList");
 const stepsList = document.getElementById("stepsList");
-const browseTagRow = document.getElementById("browseTagRow");
 const browseCategoryList = document.getElementById("browseCategoryList");
 const searchInput = document.getElementById("searchInput");
 const prevBtn = document.getElementById("prevBtn");
@@ -34,7 +32,6 @@ let starterRecipes = [];
 let userRecipes = loadLocalRecipes();
 let currentIndex = 0;
 let activeCategory = "All";
-let activeTag = "All";
 let searchTerm = "";
 
 function isMobileView() {
@@ -55,16 +52,6 @@ function ensureArray(value) {
   return [];
 }
 
-function parseTags(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item || "").trim()).filter(Boolean);
-  }
-  return String(value || "")
-    .split(/[\n,]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
 function normalizeRecipe(recipe) {
   const category = String(recipe?.category || "Dinner").trim();
   return {
@@ -74,7 +61,6 @@ function normalizeRecipe(recipe) {
     description: String(recipe?.description || "").trim(),
     ingredients: ensureArray(recipe?.ingredients),
     steps: ensureArray(recipe?.steps),
-    tags: parseTags(recipe?.tags),
     notes: String(recipe?.notes || "").trim(),
     createdAt: String(recipe?.createdAt || "").trim()
   };
@@ -98,14 +84,12 @@ function saveLocalRecipes() {
 
 function allRecipes() {
   const seen = new Set();
-  return [...userRecipes, ...starterRecipes]
-    .map(normalizeRecipe)
-    .filter((recipe) => {
-      const key = recipe.title.toLowerCase();
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+  return [...userRecipes, ...starterRecipes].filter((recipe) => {
+    const key = `${recipe.title}__${recipe.category}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function matchesSearch(recipe) {
@@ -114,19 +98,19 @@ function matchesSearch(recipe) {
     recipe.title,
     recipe.category,
     recipe.description,
-    recipe.notes,
     ...(recipe.ingredients || []),
     ...(recipe.steps || []),
-    ...(recipe.tags || [])
-  ].join(" ").toLowerCase();
+    recipe.notes
+  ]
+    .join(" ")
+    .toLowerCase();
   return haystack.includes(searchTerm);
 }
 
 function filteredRecipes() {
   return allRecipes().filter((recipe) => {
     const categoryMatch = activeCategory === "All" || recipe.category === activeCategory;
-    const tagMatch = activeTag === "All" || recipe.tags.includes(activeTag);
-    return categoryMatch && tagMatch && matchesSearch(recipe);
+    return categoryMatch && matchesSearch(recipe);
   });
 }
 
@@ -150,7 +134,7 @@ function resetFlip() {
   syncFlipDisplay();
 }
 
-function renderList(items, target, ordered = false) {
+function renderList(items, target) {
   if (!target) return;
   target.innerHTML = "";
   const fragment = document.createDocumentFragment();
@@ -160,20 +144,6 @@ function renderList(items, target, ordered = false) {
     fragment.appendChild(li);
   });
   target.appendChild(fragment);
-  if (ordered && !items.length) {
-    target.innerHTML = "";
-  }
-}
-
-function renderRecipeTags(tags) {
-  if (!recipeTagChips) return;
-  recipeTagChips.innerHTML = "";
-  tags.forEach((tag) => {
-    const pill = document.createElement("div");
-    pill.className = "meta-pill";
-    pill.textContent = tag;
-    recipeTagChips.appendChild(pill);
-  });
 }
 
 function renderRecipe() {
@@ -182,12 +152,11 @@ function renderRecipe() {
   if (!recipes.length) {
     recipeImage.src = FALLBACK_IMAGE;
     recipeImage.alt = "No recipe available";
-    recipeCategory.textContent = "Recipe";
+    recipeCategory.textContent = activeCategory === "All" ? "Recipe" : activeCategory;
     recipeTitle.textContent = "No recipes match right now";
-    recipeDescription.textContent = "Try a different search, choose another tag, or add a new recipe.";
-    renderRecipeTags([]);
+    recipeDescription.textContent = "Try a different search, choose another category, or add a new recipe.";
     renderList([], ingredientsList);
-    renderList([], stepsList, true);
+    renderList([], stepsList);
     recipeCount.textContent = "0 / 0";
     counterText.textContent = "No recipes found";
     return;
@@ -201,44 +170,11 @@ function renderRecipe() {
   recipeImage.alt = recipe.title || "Recipe image";
   recipeCategory.textContent = recipe.category || "Recipe";
   recipeTitle.textContent = recipe.title || "Untitled Recipe";
-  recipeDescription.textContent = recipe.description || "";
-  renderRecipeTags(recipe.tags || []);
+  recipeDescription.textContent = recipe.description || recipe.notes || "";
   renderList(recipe.ingredients || [], ingredientsList);
-  renderList(recipe.steps || [], stepsList, true);
+  renderList(recipe.steps || [], stepsList);
   recipeCount.textContent = `${currentIndex + 1} / ${recipes.length}`;
   counterText.textContent = `${recipes.length} recipe${recipes.length === 1 ? "" : "s"} shown`;
-}
-
-function allTags() {
-  const counts = new Map();
-  allRecipes().forEach((recipe) => {
-    recipe.tags.forEach((tag) => {
-      counts.set(tag, (counts.get(tag) || 0) + 1);
-    });
-  });
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([tag]) => tag);
-}
-
-function renderTagFilters() {
-  if (!browseTagRow) return;
-  browseTagRow.innerHTML = "";
-  ["All", ...allTags()].forEach((tag) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `chip${tag === activeTag ? " active" : ""}`;
-    button.textContent = tag;
-    button.addEventListener("click", () => {
-      activeTag = tag;
-      currentIndex = 0;
-      resetFlip();
-      renderTagFilters();
-      renderCategoryFilters();
-      renderRecipe();
-    });
-    browseTagRow.appendChild(button);
-  });
 }
 
 function renderCategoryFilters() {
@@ -373,7 +309,6 @@ async function handleSubmit(event) {
     ingredients: parseLines(formData.get("ingredients")),
     steps: parseLines(formData.get("steps")),
     notes: formData.get("notes"),
-    tags: parseTags(formData.get("tags")),
     createdAt: new Date().toISOString()
   });
 
@@ -382,11 +317,9 @@ async function handleSubmit(event) {
   try {
     await saveRecipe(newRecipe, imageData);
     activeCategory = "All";
-    activeTag = "All";
     searchTerm = "";
     searchInput.value = "";
     currentIndex = 0;
-    renderTagFilters();
     renderCategoryFilters();
     renderRecipe();
     closeModal();
@@ -461,7 +394,6 @@ async function init() {
   renderFormCategoryPills();
   syncFlipDisplay();
   await loadStarterRecipes();
-  renderTagFilters();
   renderCategoryFilters();
   renderRecipe();
 }
