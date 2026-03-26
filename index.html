@@ -16,7 +16,6 @@
       <div class="toolbar-right compact-toolbar">
         <div class="search-shell">
           <input class="search-input" id="searchInput" type="search" placeholder="Search recipes..." />
-          <button class="chip lookup-btn" id="searchBtn" type="button">Look Up</button>
           <button class="chip menu-btn" id="menuToggleBtn" type="button" aria-expanded="false" aria-controls="filterMenu">☰</button>
         </div>
 
@@ -80,16 +79,25 @@
 
         <section class="page page-right">
           <div class="side-panel">
+            <div class="browse-box">
+              <div class="eyebrow">Find a Recipe</div>
+              <h3 class="section-title">Browse</h3>
+
+              <div class="browse-section">
+                <div class="browse-label">Popular tags</div>
+                <div class="chip-row browse-tags" id="browseTagRow"></div>
+              </div>
+
+              <div class="browse-section">
+                <div class="browse-label">Categories</div>
+                <div class="browse-category-list" id="browseCategoryList"></div>
+              </div>
+            </div>
+
             <div class="notes-box hidden" id="notesBox">
               <div class="eyebrow">Recipe Notes</div>
               <h3 class="section-title">Notes</h3>
               <p id="recipeNotes"></p>
-            </div>
-
-            <div class="notes-box cloud-box" id="cloudBox">
-              <div class="eyebrow">Cloud Sync</div>
-              <h3 class="section-title">Shared across phones</h3>
-              <p id="cloudStatus">Set your Apps Script web app URL in <code>app.js</code> to turn on shared cloud syncing.</p>
             </div>
 
             <div class="mini-controls">
@@ -145,17 +153,8 @@
           <div class="field field-full">
             <label for="photo">Upload image (optional)</label>
             <input id="photo" name="photo" type="file" accept="image/*" />
-            <div class="hint">Upload a screenshot, photo from your phone, or image file. Manual entry always works. OCR is optional and will place extracted text in a helper box instead of forcing it into your recipe fields.</div>
-            <div class="ocr-tools">
-              <button class="chip" id="extractTextBtn" type="button">Extract Text</button>
-              <button class="chip" id="useOcrIngredientsBtn" type="button">Use for Ingredients</button>
-              <button class="chip" id="useOcrDirectionsBtn" type="button">Use for Directions</button>
-              <button class="chip" id="clearOcrBtn" type="button">Clear OCR</button>
-            </div>
-            <div class="ocr-status" id="ocrStatus" aria-live="polite"></div>
+            <div class="hint">Upload a screenshot, photo from your phone, or any image file if you want a recipe photo. Type the recipe details in manually for the most reliable results.</div>
             <img class="photo-preview hidden" id="photoPreview" alt="Recipe upload preview" />
-            <label for="ocrText" class="ocr-label">Extracted text</label>
-            <textarea id="ocrText" class="ocr-text" placeholder="If you upload an image, extracted text will appear here. You can also leave this empty and enter the recipe manually."></textarea>
           </div>
 
           <div class="field field-full">
@@ -182,7 +181,6 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
